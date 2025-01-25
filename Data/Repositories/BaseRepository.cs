@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace Data.Repositories;
 
-internal abstract class BaseRepository<TEntity>(DataContext context) : IRepository<TEntity> where TEntity : class
+public abstract class BaseRepository<TEntity>(DataContext context) : IRepository<TEntity> where TEntity : class
 {
     private readonly DataContext _context = context;
     private readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
@@ -77,5 +77,12 @@ internal abstract class BaseRepository<TEntity>(DataContext context) : IReposito
             Debug.WriteLine($"Error Deleting {nameof(TEntity)} entity :: {ex.Message}");
             return false;
         }
+    }
+
+    public async Task<bool> AlreadyExistsAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        if (predicate == null) return false;
+
+        return await _dbSet.FirstOrDefaultAsync(predicate) != null;
     }
 }

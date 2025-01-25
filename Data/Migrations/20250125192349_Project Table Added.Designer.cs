@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250124184849_Project Table Added")]
+    [Migration("20250125192349_Project Table Added")]
     partial class ProjectTableAdded
     {
         /// <inheritdoc />

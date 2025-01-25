@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Data.Entities;
 
-public class ProjectEntity : IProject
+public class ProjectEntity
 {
     [Key]
     public int Id { get; set; }

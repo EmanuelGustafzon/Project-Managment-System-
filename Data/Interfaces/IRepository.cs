@@ -12,4 +12,6 @@ public interface IRepository<TEntity> where TEntity : class
     public Task<TEntity> UpdateAsync(Expression<Func<TEntity, bool>> predicate, TEntity updatedEntity);
 
     public Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> predicate);
+
+    public Task<bool> AlreadyExistsAsync(Expression<Func<TEntity, bool>> predicate);
 }
