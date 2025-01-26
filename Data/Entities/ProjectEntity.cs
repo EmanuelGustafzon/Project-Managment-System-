@@ -1,23 +1,29 @@
 ﻿using Data.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Entities;
 
 public class ProjectEntity
 {
-    [Key]
+    [Column(TypeName = "Identity(100, 1)")]
     public int Id { get; set; }
-    [MaxLength(100)]
+
+    [Column(TypeName = "nvarchar(100)")]
     public string Name { get; set; } = null!;
+    [Column(TypeName = "Date")]
     public DateTime StartTime { get; set; }
+    [Column(TypeName = "Date")]
     public DateTime EndTime { get; set; }
-    public int ProjectManager { get; set; }
-    public int Customer { get; set; }
 
-    [MaxLength(100)]
-    public string Service { get; set; } = null!;
+    [Column(TypeName = "Money")]
     public decimal TotalPrice { get; set; }
-
-    [MaxLength(20)]
-    public string Status { get; set; } = null!;
+    public int ProjectManagerId { get; set; }
+    public UserEntity ProjectManager { get; set; } = null!;
+    public int CustomerId { get; set; }
+    public CustomerEntity Customer { get; set; } = null!;
+    public int ServiceId { get; set; } 
+    public ServiceEntity Service { get; set; } = null!;
+    public int StatusId { get; set; }
+    public StatusEntity Status { get; set; } = null!;
 }
