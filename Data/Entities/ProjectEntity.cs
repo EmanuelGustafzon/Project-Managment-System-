@@ -6,7 +6,6 @@ namespace Data.Entities;
 
 public class ProjectEntity
 {
-    [Column(TypeName = "Identity(100, 1)")]
     public int Id { get; set; }
 
     [Column(TypeName = "nvarchar(100)")]

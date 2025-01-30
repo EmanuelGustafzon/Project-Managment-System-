@@ -7,6 +7,8 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 {
     public DbSet<CustomerEntity> Customers { get; set; } = null!;
     public DbSet<ServiceEntity> Services { get; set; } = null!;
+
+    public DbSet<CurrencyEntity> Currencies { get; set; } = null!;
     public DbSet<StatusEntity> Statuses { get; set; } = null!;
     public DbSet<UserEntity> Users { get; set; } = null!;
     public DbSet<ProjectEntity> Projects { get; set; } = null!;

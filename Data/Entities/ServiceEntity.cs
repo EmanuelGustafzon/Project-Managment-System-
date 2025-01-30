@@ -17,6 +17,10 @@ public class ServiceEntity
     [Column(TypeName = "Money")]
     public decimal Price { get; set; }
 
+    public int CurrencyId { get; set; }
+
+    public CurrencyEntity Currency { get; set; } = null!;
+
     [EnumDataType(typeof(Units))]
     public Units Unit { get; set; } 
     public ICollection<ProjectEntity> Projects { get; } = new List<ProjectEntity>();
