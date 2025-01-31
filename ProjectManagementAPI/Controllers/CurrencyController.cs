@@ -19,11 +19,10 @@ public class CurrencyController : Controller
     }
 
     [HttpPost]
-    public async Task<ObjectResult> AddCurrency (string currency)
+    public async Task<ObjectResult> AddCurrency([FromBody] CurrencyDto currencyForm)
     {
         try
         {
-            var currencyForm = CurrencyFactory.CreateCurrencyDto(currency);
             var result = await _currencyService.CreateCurrencyAsync(currencyForm);
             return StatusCode(result.StatusCode, result.ErrorMessage);
 
@@ -63,12 +62,12 @@ public class CurrencyController : Controller
             return StatusCode(500, "An internal error occurred.");
         }
     }
-    [HttpPut]
-    public async Task<ObjectResult> UpdateCurrency(CurrencyDto updatedCurrency)
+    [HttpPut("{id}")]
+    public async Task<ObjectResult> UpdateCurrency(int id, [FromBody] CurrencyDto updatedCurrency)
     {
         try
         {
-            var result = await _currencyService.UpdateCurrencyAsync(updatedCurrency);
+            var result = await _currencyService.UpdateCurrencyAsync(id, updatedCurrency);
             return StatusCode(result.StatusCode, result);
         }
         catch (Exception ex)

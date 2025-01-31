@@ -11,7 +11,7 @@ public interface ICurrencyService
 
     public Task<IResponseResult> CreateCurrencyAsync(CurrencyDto form);
 
-    public Task<IResponseResult> UpdateCurrencyAsync(CurrencyDto updatedForm);
+    public Task<IResponseResult> UpdateCurrencyAsync(int id, CurrencyDto updatedForm);
 
     public Task<IResponseResult> DeleteCurrencyAsync(int id);
 }

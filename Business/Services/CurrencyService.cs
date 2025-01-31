@@ -43,20 +43,22 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
             return Result.InternalError(ex.Message);
         }
     }
-    public async Task<IResponseResult> CreateCurrencyAsync(CurrencyDto form)
+    public async Task<IResponseResult> CreateCurrencyAsync(CurrencyDto currencyForm)
     {
-        if (form.Currency == null) return Result.BadRequest("No currency was provided");
+        if (currencyForm.Currency == null) return Result.BadRequest("No currency was provided");
+
+        if(currencyForm.Id != 0) currencyForm.Id = 0;
 
         try
         {
-            bool alreadyExist = await _currencyRepository.GetAsync(x => x.Currency == form.Currency) != null;
+            bool alreadyExist = await _currencyRepository.GetAsync(x => x.Currency == currencyForm.Currency) != null;
             if (alreadyExist) return Result.AlreadyExists("Currency already exists");
 
 
-            CurrencyEntity currencyEntity = CurrencyFactory.CreateCurrencyEntity(form);
+            CurrencyEntity currencyEntity = CurrencyFactory.CreateCurrencyEntity(currencyForm);
             await _currencyRepository.CreateAsync(currencyEntity);
 
-            return Result.Ok();
+            return Result<CurrencyDto>.Created(currencyForm);
         }
         catch (Exception ex)
         {
@@ -64,16 +66,17 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
             return Result.InternalError(ex.Message);
         }
     }
-    public async Task<IResponseResult> UpdateCurrencyAsync(CurrencyDto updatedForm)
+    public async Task<IResponseResult> UpdateCurrencyAsync(int id ,CurrencyDto updatedCurrencyForm)
     {
-        if (updatedForm.Currency == null) return Result.BadRequest("No currency provided");
+        if (updatedCurrencyForm.Currency == null) return Result.BadRequest("No currency provided");
+        if (updatedCurrencyForm.Id != id) return Result.BadRequest("The Id's don't match");
 
         try
         {
-            var entityDoesNotExists = await _currencyRepository.GetAsync(x => x.Id == updatedForm.Id) == null;
+            var entityDoesNotExists = await _currencyRepository.GetAsync(x => x.Id == updatedCurrencyForm.Id) == null;
             if (entityDoesNotExists) return Result.NotFound("The currency was not found");
 
-            var currencyEntity = CurrencyFactory.CreateCurrencyEntity(updatedForm);
+            var currencyEntity = CurrencyFactory.CreateCurrencyEntity(updatedCurrencyForm);
             var updatedEntity = await _currencyRepository.UpdateAsync(x => x.Id == currencyEntity.Id, currencyEntity);
             if (updatedEntity == null) return Result.InternalError("Failed to update the currency");
 
