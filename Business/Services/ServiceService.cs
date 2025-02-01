@@ -3,6 +3,7 @@ using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
 using Data.Entities;
+using Data.Enums;
 using Data.Interfaces;
 using System.Diagnostics;
 
@@ -22,7 +23,7 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             if (serviceExists == true) return Result.AlreadyExists($"Service already exsist with the name: {serviceForm.Name}");
 
             bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == serviceForm.CurrencyId);
-            if (serviceExists == false) return Result.AlreadyExists($"Currency Id not found with the Id: {serviceForm.CurrencyId}");
+            if (currencyExists == false) return Result.NotFound($"Currency Id not found with the Id: {serviceForm.CurrencyId}");
 
             ServiceEntity serviceEntity = ServiceFactory.CreateServiceEntity(serviceForm);
             ServiceEntity createdEntityInDb = await _serviceRespository.CreateAsync(serviceEntity);
@@ -78,10 +79,13 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             bool serviceExists = await _serviceRespository.EntityExistsAsync(x => x.Id == id);
             if (serviceExists == false) return Result.NotFound($"Service not found with the id: {id}");
 
+            bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == updatedForm.CurrencyId);
+            if (serviceExists == false) return Result.NotFound($"Currency Id not found with the Id: {updatedForm.CurrencyId}");
+
             var updatedServiceEntity = await _serviceRespository.UpdateAsync(x => x.Id == id, ServiceFactory.CreateServiceEntity(id, updatedForm));
             if(updatedServiceEntity == null) return Result.InternalError("Could not update service in database");
-
-            return Result<ServiceDto>.Ok(ServiceFactory.CreateDto(updatedServiceEntity));
+            ServiceDto serviceDto = ServiceFactory.CreateDto(updatedServiceEntity);
+            return Result<ServiceDto>.Ok(serviceDto);
         }
         catch (Exception ex)
         {
@@ -105,6 +109,25 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         {
             Debug.WriteLine(ex.Message);
             return Result.InternalError("Could not delete service");
+        }
+    }
+    public IResponseResult GetAllUnits()
+    {
+        try
+        {
+            List<string> unitsAsString = [];
+
+            Units[] units = Enum.GetValues<Units>();
+            foreach (var item in units)
+            {
+                unitsAsString.Add(item.ToString());
+            }
+            return Result<List<string>>.Ok(unitsAsString);
+
+        } catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return Result.InternalError("Error retrieving units");
         }
     }
 }

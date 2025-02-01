@@ -1,6 +1,7 @@
 ﻿using Business.Dtos;
 using Data.Entities;
 using Data.Enums;
+using System.Diagnostics;
 
 namespace Business.Factories;
 
@@ -27,6 +28,7 @@ public static class ServiceFactory
     }
     public static ServiceDto CreateDto(ServiceEntity serviceEntity)
     {
+        Debug.WriteLine(serviceEntity.Unit.ToString());
         return new ServiceDto
         {
             Id = serviceEntity.Id,

@@ -9,4 +9,5 @@ public  interface IServiceService
     public Task<IResponseResult> CreateServicesAsync(ServiceRegistrationForm form);
     public Task<IResponseResult> UpdateServicesAsync(int id, ServiceRegistrationForm updatedForm);
     public Task<IResponseResult> DeleteServicesAsync(int id);
+    public IResponseResult GetAllUnits();
 }

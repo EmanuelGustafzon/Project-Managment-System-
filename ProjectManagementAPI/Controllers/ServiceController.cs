@@ -85,4 +85,19 @@ public class ServiceController(IServiceService serviceService) : Controller
             return StatusCode(500, "An internal error occurred.");
         }
     }
+
+    [HttpGet("/api/Service/units")]
+    public ObjectResult GetUnits()
+    {
+        try
+        {
+            var result = _serviceService.GetAllUnits();
+            return StatusCode(result.StatusCode, result);
+
+        } catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return StatusCode(500, "An internal error occurred.");
+        }
+    }
 }
