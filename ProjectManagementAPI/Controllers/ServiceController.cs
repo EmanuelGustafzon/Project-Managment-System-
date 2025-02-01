@@ -56,4 +56,33 @@ public class ServiceController(IServiceService serviceService) : Controller
             return StatusCode(500, "An internal error occurred.");
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<ObjectResult> UpdateService(int id, ServiceRegistrationForm serviceForm)
+    {
+        try
+        {
+            var result = await _serviceService.UpdateServicesAsync(id, serviceForm);
+            return StatusCode(result.StatusCode, result);
+        } catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return StatusCode(500, "An internal error occurred.");
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ObjectResult> DeleteService(int id)
+    {
+        try
+        {
+            var result = await _serviceService.DeleteServicesAsync(id);
+            return StatusCode(result.StatusCode, result);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return StatusCode(500, "An internal error occurred.");
+        }
+    }
 }

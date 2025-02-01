@@ -5,6 +5,7 @@ using Data.Interfaces;
 using Business.Models;
 using Business.Factories;
 using System.Diagnostics;
+using Data.Repositories;
 
 namespace Business.Services;
 public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrencyService
@@ -17,6 +18,8 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
         try
         {
             IEnumerable<CurrencyEntity> currencyEntities = await _currencyRepository.GetAllAsync();
+            if (!currencyEntities.Any()) Result<IEnumerable<CurrencyDto>>.Ok([]);
+
             IEnumerable<CurrencyDto> currencyDtoList = currencyEntities.Select(x => CurrencyFactory.CreateDto(x.Id, x.Currency));
 
             return Result<IEnumerable<CurrencyDto>>.Ok(currencyDtoList);
@@ -72,8 +75,8 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
 
         try
         {
-            var entityDoesNotExists = await _currencyRepository.GetAsync(x => x.Id == id) == null;
-            if (entityDoesNotExists) return Result.NotFound("The currency was not found");
+            bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == id);
+            if (currencyExists == false) return Result.NotFound($"Currency not found with the id: {id}");
 
             var currencyEntity = CurrencyFactory.CreateCurrencyEntity(CurrencyFactory.CreateDto(id, updatedCurrencyForm.Currency));
 
@@ -93,9 +96,9 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
     {
         try
         {
-            var currencyEntity = await _currencyRepository.GetAsync(x => x.Id == id);
-            if (currencyEntity == null) return Result.NotFound("The currency was not found");
-           
+            bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == id);
+            if (currencyExists == false) return Result.NotFound($"Currency not found with the id: {id}");
+
             bool result = await _currencyRepository.DeleteAsync(x => x.Id == id);
             if (result == false) return Result.InternalError("Failed to delete the currency");
 

@@ -79,7 +79,7 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IRepository
         }
     }
 
-    public async Task<bool> AlreadyExistsAsync(Expression<Func<TEntity, bool>> predicate)
+    public async Task<bool> EntityExistsAsync(Expression<Func<TEntity, bool>> predicate)
     {
         if (predicate == null) return false;
 

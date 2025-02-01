@@ -18,11 +18,11 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
     {
         try
         {
-            bool currencyDoesNotExist = await _currencyRepository.GetAsync(x => x.Id == serviceForm.CurrencyId) == null;
-            if (currencyDoesNotExist) return Result.BadRequest("Currency Id not found");
+            bool serviceExists = await _serviceRespository.EntityExistsAsync(x => x.Name == serviceForm.Name);
+            if (serviceExists == true) return Result.AlreadyExists($"Service already exsist with the name: {serviceForm.Name}");
 
-            bool serviceAlreadyExist = await _serviceRespository.GetAsync(x => x.Name == serviceForm.Name) != null;
-            if (serviceAlreadyExist) return Result.AlreadyExists("Currency already exists");
+            bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == serviceForm.CurrencyId);
+            if (serviceExists == false) return Result.AlreadyExists($"Currency Id not found with the Id: {serviceForm.CurrencyId}");
 
             ServiceEntity serviceEntity = ServiceFactory.CreateServiceEntity(serviceForm);
             ServiceEntity createdEntityInDb = await _serviceRespository.CreateAsync(serviceEntity);
@@ -42,7 +42,6 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         try
         {
             IEnumerable<ServiceEntity> serviceEntities = await _serviceRespository.GetAllAsync();
-
             if (!serviceEntities.Any()) Result<IEnumerable<ServiceDto>>.Ok([]);
 
             IEnumerable<ServiceDto> serviceDtoList = serviceEntities.Select(serviceEntity => ServiceFactory.CreateDto(serviceEntity));
@@ -62,6 +61,7 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         {
             ServiceEntity serviceEntity = await _serviceRespository.GetAsync(x => x.Id == id);
             if (serviceEntity == null) return Result.NotFound("Service not found");
+
             return Result<ServiceDto>.Ok(ServiceFactory.CreateDto(serviceEntity));
         }
         catch (Exception ex)
@@ -71,12 +71,40 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         }
     }
 
-    public Task<IResponseResult> UpdateServicesAsync(int id, ServiceRegistrationForm updatedForm)
+    public async Task<IResponseResult> UpdateServicesAsync(int id, ServiceRegistrationForm updatedForm)
     {
-        throw new NotImplementedException();
+        try
+        {
+            bool serviceExists = await _serviceRespository.EntityExistsAsync(x => x.Id == id);
+            if (serviceExists == false) return Result.NotFound($"Service not found with the id: {id}");
+
+            var updatedServiceEntity = await _serviceRespository.UpdateAsync(x => x.Id == id, ServiceFactory.CreateServiceEntity(id, updatedForm));
+            if(updatedServiceEntity == null) return Result.InternalError("Could not update service in database");
+
+            return Result<ServiceDto>.Ok(ServiceFactory.CreateDto(updatedServiceEntity));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return Result.InternalError("Could not update service in database");
+        }
     }
-    public Task<IResponseResult> DeleteServicesAsync(int id)
+    public async Task<IResponseResult> DeleteServicesAsync(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            bool serviceExists = await _serviceRespository.EntityExistsAsync(x => x.Id == id);
+            if (serviceExists == false) return Result.NotFound($"Service not found with the id: {id}");
+
+            bool result = await _serviceRespository.DeleteAsync(x => x.Id == id);
+            if (result == false) return Result.InternalError("Could not delete service");
+
+            return Result.NoContent();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return Result.InternalError("Could not delete service");
+        }
     }
 }
