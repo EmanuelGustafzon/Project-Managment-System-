@@ -17,14 +17,14 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
         try
         {
             IEnumerable<CurrencyEntity> currencyEntities = await _currencyRepository.GetAllAsync();
-            IEnumerable<CurrencyDto> currencyDtoList = currencyEntities.Select(x => CurrencyFactory.CreateCurrencyDto(x.Currency, x.Id));
+            IEnumerable<CurrencyDto> currencyDtoList = currencyEntities.Select(x => CurrencyFactory.CreateDto(x.Id, x.Currency));
 
             return Result<IEnumerable<CurrencyDto>>.Ok(currencyDtoList);
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            return Result.InternalError(ex.Message);
+            return Result.InternalError("Failed to get the currencies");
         }
     }
     public async Task<IResponseResult> GetCurrencyAsync(int id)
@@ -33,21 +33,20 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
         {
             var currencyEntity = await _currencyRepository.GetAsync(x => x.Id == id);
             if (currencyEntity == null) return Result.NotFound("The currency was not found");
-            CurrencyDto currencyDto = CurrencyFactory.CreateCurrencyDto(currencyEntity.Currency, currencyEntity.Id);
 
-            return Result<CurrencyDto>.Ok(currencyDto);
+            CurrencyDto currencyResponseDto = CurrencyFactory.CreateDto(currencyEntity.Id, currencyEntity.Currency);
+
+            return Result<CurrencyDto>.Ok(currencyResponseDto);
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError(ex.Message);
+            return Result.InternalError("Failed to get the currency");
         }
     }
-    public async Task<IResponseResult> CreateCurrencyAsync(CurrencyDto currencyForm)
+    public async Task<IResponseResult> CreateCurrencyAsync(CurrencyRegistrationForm currencyForm)
     {
         if (currencyForm.Currency == null) return Result.BadRequest("No currency was provided");
-
-        if(currencyForm.Id != 0) currencyForm.Id = 0;
 
         try
         {
@@ -56,36 +55,37 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
 
 
             CurrencyEntity currencyEntity = CurrencyFactory.CreateCurrencyEntity(currencyForm);
-            await _currencyRepository.CreateAsync(currencyEntity);
 
-            return Result<CurrencyDto>.Created(currencyForm);
+            CurrencyEntity resultEntity = await _currencyRepository.CreateAsync(currencyEntity);
+
+            return Result<CurrencyDto>.Created(CurrencyFactory.CreateDto(resultEntity.Id, resultEntity.Currency));
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError(ex.Message);
+            return Result.InternalError("Failed to create currency");
         }
     }
-    public async Task<IResponseResult> UpdateCurrencyAsync(int id ,CurrencyDto updatedCurrencyForm)
+    public async Task<IResponseResult> UpdateCurrencyAsync(int id ,CurrencyRegistrationForm updatedCurrencyForm)
     {
         if (updatedCurrencyForm.Currency == null) return Result.BadRequest("No currency provided");
-        if (updatedCurrencyForm.Id != id) return Result.BadRequest("The Id's don't match");
 
         try
         {
-            var entityDoesNotExists = await _currencyRepository.GetAsync(x => x.Id == updatedCurrencyForm.Id) == null;
+            var entityDoesNotExists = await _currencyRepository.GetAsync(x => x.Id == id) == null;
             if (entityDoesNotExists) return Result.NotFound("The currency was not found");
 
-            var currencyEntity = CurrencyFactory.CreateCurrencyEntity(updatedCurrencyForm);
-            var updatedEntity = await _currencyRepository.UpdateAsync(x => x.Id == currencyEntity.Id, currencyEntity);
+            var currencyEntity = CurrencyFactory.CreateCurrencyEntity(CurrencyFactory.CreateDto(id, updatedCurrencyForm.Currency));
+
+            var updatedEntity = await _currencyRepository.UpdateAsync(x => x.Id == id, currencyEntity);
             if (updatedEntity == null) return Result.InternalError("Failed to update the currency");
 
-            return Result<CurrencyDto>.Ok(CurrencyFactory.CreateCurrencyDto(updatedEntity.Currency, updatedEntity.Id));
+            return Result<CurrencyDto>.Ok(CurrencyFactory.CreateDto(id, updatedEntity.Currency));
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError(ex.Message);
+            return Result.InternalError("Failed to update the currency");
         }
     }
 
@@ -95,7 +95,7 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
         {
             var currencyEntity = await _currencyRepository.GetAsync(x => x.Id == id);
             if (currencyEntity == null) return Result.NotFound("The currency was not found");
-
+           
             bool result = await _currencyRepository.DeleteAsync(x => x.Id == id);
             if (result == false) return Result.InternalError("Failed to delete the currency");
 

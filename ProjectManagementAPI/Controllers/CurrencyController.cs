@@ -1,7 +1,5 @@
 ﻿using Business.Dtos;
-using Business.Factories;
 using Business.Interfaces;
-using Business.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -9,17 +7,12 @@ namespace ProjectManagementAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CurrencyController : Controller
+public class CurrencyController(ICurrencyService currencyService) : Controller
 {
-    private readonly ICurrencyService _currencyService;
-
-    public CurrencyController(ICurrencyService currencyService)
-    {
-        _currencyService = currencyService;
-    }
+    private readonly ICurrencyService _currencyService = currencyService;
 
     [HttpPost]
-    public async Task<ObjectResult> AddCurrency([FromBody] CurrencyDto currencyForm)
+    public async Task<ObjectResult> AddCurrency([FromBody] CurrencyRegistrationForm currencyForm)
     {
         try
         {
@@ -63,7 +56,7 @@ public class CurrencyController : Controller
         }
     }
     [HttpPut("{id}")]
-    public async Task<ObjectResult> UpdateCurrency(int id, [FromBody] CurrencyDto updatedCurrency)
+    public async Task<ObjectResult> UpdateCurrency(int id, [FromBody] CurrencyRegistrationForm updatedCurrency)
     {
         try
         {

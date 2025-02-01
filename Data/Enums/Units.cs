@@ -3,6 +3,5 @@
 public enum Units
 {
     Hour,
-    Day,
-    Project,
+    Day
 }
