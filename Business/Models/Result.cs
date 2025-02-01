@@ -59,4 +59,13 @@ public class Result<T> : Result
             Data = data
         };
     }
+    public static Result<T> BadRequest(T data)
+    {
+        return new Result<T>
+        {
+            Success = false,
+            StatusCode = 400,
+            Data = data
+        };
+    }
 }

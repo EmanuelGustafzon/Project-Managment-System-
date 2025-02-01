@@ -5,6 +5,7 @@ using Business.Models;
 using Data.Entities;
 using Data.Enums;
 using Data.Interfaces;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
 namespace Business.Services;
@@ -17,6 +18,13 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
 
     public async Task<IResponseResult> CreateServicesAsync(ServiceRegistrationForm serviceForm)
     {
+
+        List<ValidationResult> errors = ValidateRegistrationFormService.Validate(serviceForm);
+        if (errors != null)
+        {
+            return Result<List<ValidationResult>>.BadRequest(errors);
+        }
+
         try
         {
             bool serviceExists = await _serviceRespository.EntityExistsAsync(x => x.Name == serviceForm.Name);

@@ -6,6 +6,7 @@ using Business.Models;
 using Business.Factories;
 using System.Diagnostics;
 using Data.Repositories;
+using System.ComponentModel.DataAnnotations;
 
 namespace Business.Services;
 public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrencyService
@@ -49,7 +50,11 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
     }
     public async Task<IResponseResult> CreateCurrencyAsync(CurrencyRegistrationForm currencyForm)
     {
-        if (currencyForm.Currency == null) return Result.BadRequest("No currency was provided");
+        List<ValidationResult> errors = ValidateRegistrationFormService.Validate(currencyForm);
+        if (errors != null)
+        {
+            return Result<List<ValidationResult>>.BadRequest(errors);
+        }
 
         try
         {

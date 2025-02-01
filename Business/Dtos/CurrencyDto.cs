@@ -6,8 +6,3 @@ public class CurrencyDto
     public string Currency { get; set; } = null!;
 }
 
-public class CurrencyRegistrationForm
-{
-    public string Currency { get; set; } = null!;
-}
-
