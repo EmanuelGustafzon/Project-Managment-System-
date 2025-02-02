@@ -70,7 +70,7 @@ public class CurrencyController(ICurrencyService currencyService) : Controller
         }
     }
     [HttpDelete("{id}")]
-    public async Task<ObjectResult> UpdateCurrency(int id)
+    public async Task<ObjectResult> DeleteCurrency(int id)
     {
         try
         {

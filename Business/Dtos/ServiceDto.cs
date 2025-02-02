@@ -1,6 +1,4 @@
-﻿using Data.Enums;
-
-namespace Business.Dtos;
+﻿namespace Business.Dtos;
 
 public class ServiceDto
 {

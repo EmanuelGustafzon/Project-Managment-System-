@@ -19,8 +19,8 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
     public async Task<IResponseResult> CreateServicesAsync(ServiceRegistrationForm serviceForm)
     {
 
-        List<ValidationResult> errors = ValidateRegistrationFormService.Validate(serviceForm);
-        if (errors != null)
+        List<ValidationResult> errors = ValidateRegistrationFormService.Validate<ServiceRegistrationForm>(serviceForm);
+        if (errors?.Count != 0 && errors != null)
         {
             return Result<List<ValidationResult>>.BadRequest(errors);
         }
@@ -33,7 +33,7 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == serviceForm.CurrencyId);
             if (currencyExists == false) return Result.NotFound($"Currency Id not found with the Id: {serviceForm.CurrencyId}");
 
-            ServiceEntity serviceEntity = ServiceFactory.CreateServiceEntity(serviceForm);
+            ServiceEntity serviceEntity = ServiceFactory.CreateEntity(serviceForm);
             ServiceEntity createdEntityInDb = await _serviceRespository.CreateAsync(serviceEntity);
 
             ServiceDto serviceDto = ServiceFactory.CreateDto(createdEntityInDb);
@@ -82,6 +82,12 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
 
     public async Task<IResponseResult> UpdateServicesAsync(int id, ServiceRegistrationForm updatedForm)
     {
+        List<ValidationResult> errors = ValidateRegistrationFormService.Validate<ServiceRegistrationForm>(updatedForm);
+        if (errors?.Count != 0 && errors != null)
+        {
+            return Result<List<ValidationResult>>.BadRequest(errors);
+        }
+
         try
         {
             bool serviceExists = await _serviceRespository.EntityExistsAsync(x => x.Id == id);
@@ -90,8 +96,8 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == updatedForm.CurrencyId);
             if (serviceExists == false) return Result.NotFound($"Currency Id not found with the Id: {updatedForm.CurrencyId}");
 
-            var updatedServiceEntity = await _serviceRespository.UpdateAsync(x => x.Id == id, ServiceFactory.CreateServiceEntity(id, updatedForm));
-            if(updatedServiceEntity == null) return Result.InternalError("Could not update service in database");
+            var updatedServiceEntity = await _serviceRespository.UpdateAsync(x => x.Id == id, ServiceFactory.CreateEntity(id, updatedForm));
+            if(updatedServiceEntity == null) return Result.InternalError("Could not update service");
             ServiceDto serviceDto = ServiceFactory.CreateDto(updatedServiceEntity);
             return Result<ServiceDto>.Ok(serviceDto);
         }

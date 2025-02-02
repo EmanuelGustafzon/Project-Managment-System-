@@ -5,25 +5,20 @@ namespace Business.Factories;
 
 public static class CurrencyFactory
 {
-
-    public static CurrencyRegistrationForm CreateRegistrationForm()
-    {
-        return new CurrencyRegistrationForm();
-    }
     public static CurrencyRegistrationForm CreateRegistrationForm(string currency)
     {
         return new CurrencyRegistrationForm { Currency = currency};
     }
-    public static CurrencyDto CreateDto(int id, string currency)
+    public static CurrencyDto CreateDto(CurrencyEntity entity)
     {
-        return new CurrencyDto { Id = id, Currency = currency};
+        return new CurrencyDto { Id = entity.Id, Currency = entity.Currency};
     }
-    public static CurrencyEntity CreateCurrencyEntity(CurrencyRegistrationForm form)
+    public static CurrencyEntity CreateEntity(CurrencyRegistrationForm form)
     {
         return new CurrencyEntity { Currency = form.Currency };
     }
-    public static CurrencyEntity CreateCurrencyEntity(CurrencyDto form)
+    public static CurrencyEntity CreateEntity(int id, CurrencyRegistrationForm form)
     {
-        return new CurrencyEntity { Currency = form.Currency, Id = form.Id };
+        return new CurrencyEntity { Id = id, Currency = form.Currency};
     }
 }

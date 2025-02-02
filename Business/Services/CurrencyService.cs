@@ -5,7 +5,6 @@ using Data.Interfaces;
 using Business.Models;
 using Business.Factories;
 using System.Diagnostics;
-using Data.Repositories;
 using System.ComponentModel.DataAnnotations;
 
 namespace Business.Services;
@@ -21,7 +20,7 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
             IEnumerable<CurrencyEntity> currencyEntities = await _currencyRepository.GetAllAsync();
             if (!currencyEntities.Any()) Result<IEnumerable<CurrencyDto>>.Ok([]);
 
-            IEnumerable<CurrencyDto> currencyDtoList = currencyEntities.Select(x => CurrencyFactory.CreateDto(x.Id, x.Currency));
+            IEnumerable<CurrencyDto> currencyDtoList = currencyEntities.Select(currencyEntity => CurrencyFactory.CreateDto(currencyEntity));
 
             return Result<IEnumerable<CurrencyDto>>.Ok(currencyDtoList);
         }
@@ -38,7 +37,7 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
             var currencyEntity = await _currencyRepository.GetAsync(x => x.Id == id);
             if (currencyEntity == null) return Result.NotFound("The currency was not found");
 
-            CurrencyDto currencyResponseDto = CurrencyFactory.CreateDto(currencyEntity.Id, currencyEntity.Currency);
+            CurrencyDto currencyResponseDto = CurrencyFactory.CreateDto(currencyEntity);
 
             return Result<CurrencyDto>.Ok(currencyResponseDto);
         }
@@ -50,23 +49,22 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
     }
     public async Task<IResponseResult> CreateCurrencyAsync(CurrencyRegistrationForm currencyForm)
     {
-        List<ValidationResult> errors = ValidateRegistrationFormService.Validate(currencyForm);
-        if (errors != null)
+        List<ValidationResult> errors = ValidateRegistrationFormService.Validate<CurrencyRegistrationForm>(currencyForm);
+        if (errors?.Count != 0 && errors != null)
         {
             return Result<List<ValidationResult>>.BadRequest(errors);
         }
-
         try
         {
-            bool alreadyExist = await _currencyRepository.GetAsync(x => x.Currency == currencyForm.Currency) != null;
+            bool alreadyExist = await _currencyRepository.EntityExistsAsync(x => x.Currency == currencyForm.Currency);
             if (alreadyExist) return Result.AlreadyExists("Currency already exists");
 
 
-            CurrencyEntity currencyEntity = CurrencyFactory.CreateCurrencyEntity(currencyForm);
+            CurrencyEntity currencyEntity = CurrencyFactory.CreateEntity(currencyForm);
 
             CurrencyEntity resultEntity = await _currencyRepository.CreateAsync(currencyEntity);
 
-            return Result<CurrencyDto>.Created(CurrencyFactory.CreateDto(resultEntity.Id, resultEntity.Currency));
+            return Result<CurrencyDto>.Created(CurrencyFactory.CreateDto(resultEntity));
         }
         catch (Exception ex)
         {
@@ -76,19 +74,22 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
     }
     public async Task<IResponseResult> UpdateCurrencyAsync(int id ,CurrencyRegistrationForm updatedCurrencyForm)
     {
-        if (updatedCurrencyForm.Currency == null) return Result.BadRequest("No currency provided");
+        List<ValidationResult> errors = ValidateRegistrationFormService.Validate<CurrencyRegistrationForm>(updatedCurrencyForm);
+        if (errors?.Count != 0 && errors != null)
+        {
+            return Result<List<ValidationResult>>.BadRequest(errors);
+        }
 
         try
         {
             bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == id);
             if (currencyExists == false) return Result.NotFound($"Currency not found with the id: {id}");
 
-            var currencyEntity = CurrencyFactory.CreateCurrencyEntity(CurrencyFactory.CreateDto(id, updatedCurrencyForm.Currency));
-
-            var updatedEntity = await _currencyRepository.UpdateAsync(x => x.Id == id, currencyEntity);
+            var updatedEntity = await _currencyRepository.UpdateAsync(x => x.Id == id, CurrencyFactory.CreateEntity(id, updatedCurrencyForm));
             if (updatedEntity == null) return Result.InternalError("Failed to update the currency");
 
-            return Result<CurrencyDto>.Ok(CurrencyFactory.CreateDto(id, updatedEntity.Currency));
+            CurrencyDto currencyDto = CurrencyFactory.CreateDto(updatedEntity);
+            return Result<CurrencyDto>.Ok(currencyDto);
         }
         catch (Exception ex)
         {
@@ -112,7 +113,7 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError(ex.Message);
+            return Result.InternalError("failed to delete currency");
         }
     }
 }
