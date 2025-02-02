@@ -3,7 +3,7 @@ using Data.Entities;
 
 namespace Business.Factories;
 
-internal class CustomerFactory
+public static class CustomerFactory
 {
     public static CustomerRegistrationForm CreateRegistrationForm(string name)
     {
@@ -11,7 +11,7 @@ internal class CustomerFactory
     }
     public static CustomerDto CreateDto(CustomerEntity entity)
     {
-        return new CustomerDto { Id = entity.Id, Name = entity.Name };
+        return new CustomerDto { Id = entity.Id , Name = entity.Name };
     }
     public static CustomerEntity CreateEntity(CustomerRegistrationForm form)
     {

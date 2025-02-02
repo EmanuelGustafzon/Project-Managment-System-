@@ -61,9 +61,9 @@ public class UserService(IUserRepository userRepository) : IUserService
             if (alreadyExist) return Result.AlreadyExists("Email already exists");
 
 
-            UserEntity currencyEntity = UserFactory.CreateEntity(userForm);
+            UserEntity userEntity = UserFactory.CreateEntity(userForm);
 
-            var resultEntity = await _userRepository.CreateAsync(currencyEntity);
+            var resultEntity = await _userRepository.CreateAsync(userEntity);
 
             return Result<UserDto>.Created(UserFactory.CreateDto(resultEntity));
         }

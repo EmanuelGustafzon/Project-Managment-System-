@@ -1,4 +1,5 @@
-﻿using Data.Interfaces;
+﻿using Data.Enums;
+using Data.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,6 +24,5 @@ public class ProjectEntity
     public CustomerEntity Customer { get; set; } = null!;
     public int ServiceId { get; set; } 
     public ServiceEntity Service { get; set; } = null!;
-    public int StatusId { get; set; }
-    public StatusEntity Status { get; set; } = null!;
+    public StatusStates Status { get; set; }
 }

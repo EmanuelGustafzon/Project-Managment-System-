@@ -20,7 +20,6 @@ public static class ServiceFactory
     }
     public static ServiceDto CreateDto(ServiceEntity serviceEntity)
     {
-        Debug.WriteLine(serviceEntity.Unit.ToString());
         return new ServiceDto
         {
             Id = serviceEntity.Id,

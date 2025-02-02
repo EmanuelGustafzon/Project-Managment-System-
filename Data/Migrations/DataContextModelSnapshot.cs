@@ -32,11 +32,11 @@ namespace Data.Migrations
 
                     b.Property<string>("Currency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Currencies");
+                    b.ToTable("CurrencyEntity");
                 });
 
             modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
@@ -53,7 +53,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("CustomerEntity");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
@@ -83,8 +83,9 @@ namespace Data.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("Date");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("Money");
@@ -96,8 +97,6 @@ namespace Data.Migrations
                     b.HasIndex("ProjectManagerId");
 
                     b.HasIndex("ServiceId");
-
-                    b.HasIndex("StatusId");
 
                     b.ToTable("Projects");
                 });
@@ -134,23 +133,6 @@ namespace Data.Migrations
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("Data.Entities.StatusEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Statuses");
-                });
-
             modelBuilder.Entity("Data.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -173,7 +155,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Currencies");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
@@ -196,25 +178,17 @@ namespace Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Data.Entities.StatusEntity", "Status")
-                        .WithMany("Projects")
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Customer");
 
                     b.Navigation("ProjectManager");
 
                     b.Navigation("Service");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
                 {
                     b.HasOne("Data.Entities.CurrencyEntity", "Currency")
-                        .WithMany("Projects")
+                        .WithMany("Services")
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -224,7 +198,7 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.CurrencyEntity", b =>
                 {
-                    b.Navigation("Projects");
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
@@ -233,11 +207,6 @@ namespace Data.Migrations
                 });
 
             modelBuilder.Entity("Data.Entities.ServiceEntity", b =>
-                {
-                    b.Navigation("Projects");
-                });
-
-            modelBuilder.Entity("Data.Entities.StatusEntity", b =>
                 {
                     b.Navigation("Projects");
                 });

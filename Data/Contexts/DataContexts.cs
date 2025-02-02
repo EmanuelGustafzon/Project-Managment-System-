@@ -7,10 +7,8 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 {
     public DbSet<CustomerEntity> Customers { get; set; } = null!;
     public DbSet<ServiceEntity> Services { get; set; } = null!;
-
-    public DbSet<CurrencyEntity> Currencies { get; set; } = null!;
-    public DbSet<StatusEntity> Statuses { get; set; } = null!;
-    public DbSet<UserEntity> Users { get; set; } = null!;
+    public DbSet<UserEntity> Currencies { get; set; } = null!;
+    public DbSet<CustomerEntity> Users { get; set; } = null!;
     public DbSet<ProjectEntity> Projects { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -21,7 +19,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             .Property(e => e.Unit)
             .HasConversion<string>();
 
-        modelBuilder.Entity<StatusEntity>()
+        modelBuilder.Entity<ProjectEntity>()
            .Property(e => e.Status)
            .HasConversion<string>();
     }
