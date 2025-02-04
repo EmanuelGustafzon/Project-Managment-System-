@@ -18,7 +18,7 @@ public class UserController(IUserService userService) : Controller
         try
         {
             var result = await _userService.CreateUserAsync(userForm);
-            return StatusCode(result.StatusCode, result.ErrorMessage);
+            return StatusCode(result.StatusCode, result);
 
         }
         catch (Exception ex)

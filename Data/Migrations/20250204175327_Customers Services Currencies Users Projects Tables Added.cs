@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class ProjectsUsersCustomersCurrenciesServicesTablesAdded : Migration
+    public partial class CustomersServicesCurrenciesUsersProjectsTablesAdded : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

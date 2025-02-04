@@ -18,7 +18,7 @@ public class CustomerController(ICustomerService customerService) : Controller
         try
         {
             var result = await _customerService.CreateCustomerAsync(customerForm);
-            return StatusCode(result.StatusCode, result.ErrorMessage);
+            return StatusCode(result.StatusCode, result);
 
         }
         catch (Exception ex)

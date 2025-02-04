@@ -1,43 +1,49 @@
-﻿using Business.Interfaces;
-using Data.Contexts;
+﻿using Business.Dtos;
+using Business.Factories;
+using Business.Interfaces;
+using Business.Models;
 using Data.Entities;
 using Data.Interfaces;
-using Data.Repositories;
-using System.Linq.Expressions;
+using System.Diagnostics;
 
 namespace Business.Services;
 
-public class ProjectService : IProjectService
+public class ProjectService(IProjectRepository projectRepository) : IProjectService
 {
-    private readonly IProjectRepository _projectRepository;
+    private readonly IProjectRepository _projectRepository = projectRepository;
 
-    public ProjectService(IProjectRepository projectRepository)
+    public async Task<IResponseResult> CreateProjectAsync(ProjectRegistrationForm projectForm)
     {
-        _projectRepository = projectRepository;
+        try
+        {
+            var entity = ProjectFactory.CreateEntity(projectForm);
+            ProjectEntity createdProject = await _projectRepository.CreateAsync(entity);
+            if (createdProject == null) return Result.InternalError("Could not create project");
+
+            return Result<ProjectEntity>.Created(createdProject);
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return Result.InternalError("Could not create project");
+        }
     }
 
-    public Task<ProjectEntity> CreateProjectAsync(ProjectEntity entity)
+    public async Task<IResponseResult> GetAllProjectsAsync()
     {
-        return _projectRepository.CreateAsync(entity);
-    }
+        try
+        {
+            IEnumerable<ProjectEntity> entities = await _projectRepository.GetAllAsync();
+            if (!entities.Any()) return Result<IEnumerable<ProjectDto>>.Ok([]);
 
-    public Task<bool> DeleteProjectAsync(Expression<Func<ProjectEntity, bool>> predicate)
-    {
-        return _projectRepository.DeleteAsync(predicate);
-    }
-
-    public Task<IEnumerable<ProjectEntity>> GetAllProjectsAsync()
-    {
-        return _projectRepository.GetAllAsync();
-    }
-
-    public Task<ProjectEntity> GetProjectAsync(Expression<Func<ProjectEntity, bool>> predicate)
-    {
-        return _projectRepository.GetAsync(predicate);
-    }
-
-    public Task<ProjectEntity> UpdateProjectAsync(Expression<Func<ProjectEntity, bool>> predicate, ProjectEntity updatedEntity)
-    {
-        return _projectRepository.UpdateAsync(predicate, updatedEntity);
+            IEnumerable<ProjectDto> projectDtoList = entities.Select(projectEntity => ProjectFactory.CreateDto(projectEntity));
+            return Result<IEnumerable<ProjectDto>>.Ok(projectDtoList);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return Result.InternalError("Could not get projects");
+        }
     }
 }

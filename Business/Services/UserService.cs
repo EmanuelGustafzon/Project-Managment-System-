@@ -4,7 +4,6 @@ using Business.Interfaces;
 using Business.Models;
 using Data.Entities;
 using Data.Interfaces;
-using Data.Repositories;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
@@ -59,7 +58,6 @@ public class UserService(IUserRepository userRepository) : IUserService
         {
             bool alreadyExist = await _userRepository.EntityExistsAsync(x => x.Email == userForm.Email);
             if (alreadyExist) return Result.AlreadyExists("Email already exists");
-
 
             UserEntity userEntity = UserFactory.CreateEntity(userForm);
 

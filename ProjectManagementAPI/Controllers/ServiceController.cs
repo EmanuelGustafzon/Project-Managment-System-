@@ -18,7 +18,7 @@ public class ServiceController(IServiceService serviceService) : Controller
         try
         {
             var result = await _serviceService.CreateServicesAsync(serviceForm);
-            return StatusCode(result.StatusCode, result.ErrorMessage);
+            return StatusCode(result.StatusCode, result);
 
         }
         catch (Exception ex)

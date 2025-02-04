@@ -1,51 +1,45 @@
-﻿using Business.Interfaces;
+﻿using Business.Dtos;
+using Business.Interfaces;
 using Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace ProjectManagementAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectController : ControllerBase
+    public class ProjectController(IProjectService projectService) : ControllerBase
     {
 
-        private readonly IProjectService _projectService;
+        private readonly IProjectService _projectService = projectService;
 
-        public ProjectController(IProjectService projectService)
-        {
-            _projectService = projectService;
-        }
-
-        // GET: api/<ProjectController>
-        [HttpGet]
-        public async Task<IEnumerable<ProjectEntity>> GetAllProjectsAsync()
-        {
-            return await _projectService.GetAllProjectsAsync();
-        }
-
-        // GET api/<ProjectController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ProjectController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ObjectResult> CreateProject([FromBody] ProjectRegistrationForm form)
         {
+            try
+            {
+                var result = await _projectService.CreateProjectAsync(form);
+                return StatusCode(result.StatusCode, result);
+            } catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return StatusCode(500, "An internal error occurred.");
+            }
         }
 
-        // PUT api/<ProjectController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpGet]
+        public async Task<ObjectResult> GetProject()
         {
-        }
-
-        // DELETE api/<ProjectController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            try
+            {
+                var result = await _projectService.GetAllProjectsAsync();
+                return StatusCode(result.StatusCode, result);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return StatusCode(500, "An internal error occurred.");
+            }
         }
     }
 }

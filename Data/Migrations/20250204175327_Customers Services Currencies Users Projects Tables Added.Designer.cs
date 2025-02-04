@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250202201352_Projects Users Customers Currencies Services Tables Added")]
-    partial class ProjectsUsersCustomersCurrenciesServicesTablesAdded
+    [Migration("20250204175327_Customers Services Currencies Users Projects Tables Added")]
+    partial class CustomersServicesCurrenciesUsersProjectsTablesAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

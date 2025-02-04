@@ -17,7 +17,7 @@ public class CurrencyController(ICurrencyService currencyService) : Controller
         try
         {
             var result = await _currencyService.CreateCurrencyAsync(currencyForm);
-            return StatusCode(result.StatusCode, result.ErrorMessage);
+            return StatusCode(result.StatusCode, result);
 
         } catch (Exception ex)
         {
