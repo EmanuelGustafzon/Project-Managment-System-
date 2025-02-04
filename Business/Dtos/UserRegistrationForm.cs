@@ -8,6 +8,5 @@ public class UserRegistrationForm
     public string Firstname { get; set; } = null!;
     [Required]
     public string Lastname { get; set; } = null!;
-    [EmailAddress]
-    public string Email { get; set; } = null!;
+    public ContactRegistrationForm? ContactInformation { get; set; }
 }
