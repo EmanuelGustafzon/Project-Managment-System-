@@ -36,7 +36,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Currencies");
+                    b.ToTable("CurrencyEntity");
                 });
 
             modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
@@ -53,7 +53,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers");
+                    b.ToTable("CustomerEntity");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
@@ -133,7 +133,7 @@ namespace Data.Migrations
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("Data.Entities.UserContactEntity", b =>
+            modelBuilder.Entity("Data.Entities.UserEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,29 +145,6 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserContacts");
-                });
-
-            modelBuilder.Entity("Data.Entities.UserEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Firstname")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
@@ -178,7 +155,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Currencies");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
@@ -219,17 +196,6 @@ namespace Data.Migrations
                     b.Navigation("Currency");
                 });
 
-            modelBuilder.Entity("Data.Entities.UserContactEntity", b =>
-                {
-                    b.HasOne("Data.Entities.UserEntity", "User")
-                        .WithOne("ContactInformation")
-                        .HasForeignKey("Data.Entities.UserContactEntity", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Data.Entities.CurrencyEntity", b =>
                 {
                     b.Navigation("Services");
@@ -247,8 +213,6 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.UserEntity", b =>
                 {
-                    b.Navigation("ContactInformation");
-
                     b.Navigation("Projects");
                 });
 #pragma warning restore 612, 618
