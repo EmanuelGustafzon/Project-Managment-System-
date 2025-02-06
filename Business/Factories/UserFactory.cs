@@ -5,10 +5,6 @@ namespace Business.Factories;
 
 public static class UserFactory
 {
-    public static UserRegistrationForm CreateRegistrationForm(string firstname, string lastname, string email)
-    {
-        return new UserRegistrationForm { Firstname = firstname, Lastname = lastname,  Email = email };
-    }
     public static UserDto CreateDto(UserEntity entity)
     {
         return new UserDto { Id = entity.Id, FirstName = entity.Firstname, LastName = entity.Lastname, Email = entity.Email};

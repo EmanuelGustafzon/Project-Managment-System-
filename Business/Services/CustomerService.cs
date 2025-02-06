@@ -1,5 +1,4 @@
-﻿
-using Business.Dtos;
+﻿using Business.Dtos;
 using Business.Factories;
 using Business.Interfaces;
 using Business.Models;
@@ -10,9 +9,9 @@ using System.Diagnostics;
 
 namespace Business.Services;
 
-public class CustomerService(ICutomerRepository customerRepository) : ICustomerService
+public class CustomerService(ICustomerRepository customerRepository) : ICustomerService
 {
-    private readonly ICutomerRepository _customerRepository = customerRepository;
+    private readonly ICustomerRepository _customerRepository = customerRepository;
 
     public async Task<IResponseResult> GetAllCustomersAsync()
     {

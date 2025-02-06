@@ -1,6 +1,7 @@
 ﻿using Data.Contexts;
 using Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
@@ -10,6 +11,9 @@ public abstract class BaseRepository<TEntity>(DataContext context) : IRepository
 {
     private readonly DataContext _context = context;
     private readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
+
+    public DataContext GetContext() => _context;
+
 
     public virtual async Task<TEntity> CreateAsync(TEntity entity)
     {

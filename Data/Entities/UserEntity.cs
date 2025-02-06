@@ -10,6 +10,7 @@ public class UserEntity
     public string Firstname { get; set; } = null!;
     [Column(TypeName = "nvarchar(50)")]
     public string Lastname { get; set; } = null!;
+
     [Column(TypeName = "nvarchar(100)")]
     public string Email { get; set; } = null!;
 

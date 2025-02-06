@@ -7,17 +7,6 @@ namespace Business.Factories;
 
 public static class ServiceFactory
 {
-    public static ServiceRegistrationForm CreateRegistrationForm(string name, string? description, decimal price, int currencyId, string unit)
-    {
-        return new ServiceRegistrationForm
-        {
-            Name = name,
-            Description = description,
-            Price = price,
-            CurrencyId = currencyId,
-            Unit = unit
-        };
-    }
     public static ServiceDto CreateDto(ServiceEntity serviceEntity)
     {
         return new ServiceDto
