@@ -31,7 +31,7 @@ public abstract class Result : IResponseResult
     {
         return new ErrorResult(409, message);
     }
-    public static Result InternalError(string message)
+    public static Result Error(string message)
     {
         return new ErrorResult(500, message);
     }

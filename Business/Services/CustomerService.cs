@@ -27,7 +27,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            return Result.InternalError("Failed to get the customers");
+            return Result.Error("Failed to get the customers");
         }
     }
     public async Task<IResponseResult> GetCustomerAsync(int id)
@@ -44,7 +44,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Failed to get the customer");
+            return Result.Error("Failed to get the customer");
         }
     }
     public async Task<IResponseResult> CreateCustomerAsync(CustomerRegistrationForm customerForm)
@@ -69,7 +69,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Failed to create Customer");
+            return Result.Error("Failed to create Customer");
         }
     }
     public async Task<IResponseResult> UpdateCustomerAsync(int id, CustomerRegistrationForm updatedCustomerForm)
@@ -86,7 +86,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
             if (customerExists == false) return Result.NotFound($"Customer not found with the id: {id}");
 
             var updatedEntity = await _customerRepository.UpdateAsync(x => x.Id == id, CustomerFactory.CreateEntity(id, updatedCustomerForm));
-            if (updatedEntity == null) return Result.InternalError("Failed to update the Customer");
+            if (updatedEntity == null) return Result.Error("Failed to update the Customer");
 
             CustomerDto customerDto = CustomerFactory.CreateDto(updatedEntity);
             return Result<CustomerDto>.Ok(customerDto);
@@ -94,7 +94,7 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Failed to update the Customer");
+            return Result.Error("Failed to update the Customer");
         }
     }
 
@@ -106,14 +106,14 @@ public class CustomerService(ICustomerRepository customerRepository) : ICustomer
             if (customerExist == false) return Result.NotFound($"Customer not found with the id: {id}");
 
             bool result = await _customerRepository.DeleteAsync(x => x.Id == id);
-            if (result == false) return Result.InternalError("Failed to delete the Customer");
+            if (result == false) return Result.Error("Failed to delete the Customer");
 
             return Result.NoContent();
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("failed to delete Customer");
+            return Result.Error("failed to delete Customer");
         }
     }
 }

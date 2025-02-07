@@ -7,6 +7,8 @@ public class ProjectDto
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string Status { get; set; } = null!;
+
+    public decimal TotalPrice { get; set; }
     public UserDto ProjectManager { get; set; } = null!;
     public ServiceDto Service { get; set; } = null!;
     public CustomerDto Customer { get; set; } = null!;

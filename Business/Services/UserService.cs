@@ -27,7 +27,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            return Result.InternalError("Failed to get the users");
+            return Result.Error("Failed to get the users");
         }
     }
     public async Task<IResponseResult> GetUserAsync(int id)
@@ -44,7 +44,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Failed to get the user");
+            return Result.Error("Failed to get the user");
         }
     }
     public async Task<IResponseResult> CreateUserAsync(UserRegistrationForm userForm)
@@ -68,7 +68,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Failed to create user");
+            return Result.Error("Failed to create user");
         }
     }
     public async Task<IResponseResult> UpdateUserAsync(int id, UserRegistrationForm updatedUserForm)
@@ -85,7 +85,7 @@ public class UserService(IUserRepository userRepository) : IUserService
             if (userExists == false) return Result.NotFound($"User not found with the id: {id}");
 
             var updatedEntity = await _userRepository.UpdateAsync(x => x.Id == id, UserFactory.CreateEntity(id, updatedUserForm));
-            if (updatedEntity == null) return Result.InternalError("Failed to update the User");
+            if (updatedEntity == null) return Result.Error("Failed to update the User");
 
             UserDto userDto = UserFactory.CreateDto(updatedEntity);
             return Result<UserDto>.Ok(userDto);
@@ -93,7 +93,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Failed to update the user");
+            return Result.Error("Failed to update the user");
         }
     }
 
@@ -105,14 +105,14 @@ public class UserService(IUserRepository userRepository) : IUserService
             if (userExists == false) return Result.NotFound($"User not found with the id: {id}");
 
             bool result = await _userRepository.DeleteAsync(x => x.Id == id);
-            if (result == false) return Result.InternalError("Failed to delete the user");
+            if (result == false) return Result.Error("Failed to delete the user");
 
             return Result.NoContent();
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("failed to delete user");
+            return Result.Error("failed to delete user");
         }
     }
 }

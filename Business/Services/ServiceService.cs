@@ -43,7 +43,7 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Failed to create the service");
+            return Result.Error("Failed to create the service");
         }
     }
     public async Task<IResponseResult> GetAllServicesAsync()
@@ -60,7 +60,7 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            return Result.InternalError("Failed to get the services");
+            return Result.Error("Failed to get the services");
         }
     }
 
@@ -76,7 +76,7 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Could not get service from database");
+            return Result.Error("Could not get service from database");
         }
     }
 
@@ -97,14 +97,14 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             if (serviceExists == false) return Result.NotFound($"Currency Id not found with the Id: {updatedForm.CurrencyId}");
 
             var updatedServiceEntity = await _serviceRespository.UpdateAsync(x => x.Id == id, ServiceFactory.CreateEntity(id, updatedForm));
-            if(updatedServiceEntity == null) return Result.InternalError("Could not update service");
+            if(updatedServiceEntity == null) return Result.Error("Could not update service");
             ServiceDto serviceDto = ServiceFactory.CreateDto(updatedServiceEntity);
             return Result<ServiceDto>.Ok(serviceDto);
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Could not update service in database");
+            return Result.Error("Could not update service in database");
         }
     }
     public async Task<IResponseResult> DeleteServicesAsync(int id)
@@ -115,14 +115,14 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             if (serviceExists == false) return Result.NotFound($"Service not found with the id: {id}");
 
             bool result = await _serviceRespository.DeleteAsync(x => x.Id == id);
-            if (result == false) return Result.InternalError("Could not delete service");
+            if (result == false) return Result.Error("Could not delete service");
 
             return Result.NoContent();
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Could not delete service");
+            return Result.Error("Could not delete service");
         }
     }
     public IResponseResult GetAllUnits()
@@ -141,7 +141,7 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         } catch (Exception ex)
         {
             Debug.WriteLine(ex.Message);
-            return Result.InternalError("Error retrieving units");
+            return Result.Error("Error retrieving units");
         }
     }
 }
