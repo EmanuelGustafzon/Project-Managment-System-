@@ -19,6 +19,8 @@ public class ProjectRegistrationForm
 
     [TypeConverter(typeof(StatusStates))]
     public string Status { get; set; } = StatusStates.NotStarted.ToString();
+
+    [Range(1, int.MaxValue, ErrorMessage = "Please enter a value bigger than 0")]
     public int ProjectManagerId { get; set; }
     public decimal? TotalPrice { get; set; }
     public int? ServiceId { get; set; }

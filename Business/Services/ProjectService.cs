@@ -53,9 +53,6 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
                 else return Result.Error(errorMessage!);
             }
 
-            (bool keysAreValid, string? validationError) = await ValidateForeignKeys(projectForm);
-            // if (!keysAreValid) return Result.Error(validationError!);
-
             if(projectForm.TotalPrice == 0 || projectForm.TotalPrice == null)
             {
                 var totalPrice = await GetCalculatedPrice(projectForm);
@@ -63,10 +60,8 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
             }
 
             var entity = ProjectFactory.CreateEntity(projectForm);
-
             ProjectEntity createdProject = await _projectRepository.CreateAsync(entity);
-            Debug.WriteLine(createdProject);
-            if (createdProject == null) return Result.Error("Could not create project");
+            if (createdProject == null) return Result.Error("Could not creaye project");
 
             await transaction.CommitAsync();
             ProjectEntity fullProject = await _projectRepository.GetAsync(x => x.Id == createdProject.Id);
@@ -128,31 +123,24 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
             {
                 (int serviceId, string? errorMessage) = await CreateServiceAndGetId(projectForm.ServiceForm);
                 if (serviceId != 0) projectForm.CustomerId = serviceId;
-                else return Result.Error(errorMessage!); 
+                else return Result.Error(errorMessage!);
             }
-
-            (bool keysAreValid, string? validationError) = await ValidateForeignKeys(projectForm);
-            if (!keysAreValid) return Result.Error(validationError!);
 
             if (projectForm.TotalPrice == 0 || projectForm.TotalPrice == null)
             {
-                var totalPrice = GetCalculatedPrice(projectForm);
+                var totalPrice = await GetCalculatedPrice(projectForm);
+                projectForm.TotalPrice = totalPrice;
             }
 
-            var entity = ProjectFactory.CreateEntity(projectForm);
+            var entity = ProjectFactory.CreateEntity(id, projectForm);
             ProjectEntity updatedProject = await _projectRepository.UpdateAsync(x => x.Id == id, entity);
-            if (updatedProject == null)
-            {
-                await transaction.RollbackAsync();
-                return Result.Error("Could not create project");
-            }
+            if(updatedProject == null) return Result.Error("Could not update project");
 
             await transaction.CommitAsync();
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
             Debug.WriteLine(ex.Message);
             return Result.Error("Could not update project");
         }
@@ -198,29 +186,6 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
 
         }
         return (0, result.ErrorMessage);
-    }
-
-    private async Task<(bool keysAreValid, string? validationError)> ValidateForeignKeys(ProjectRegistrationForm projectForm)
-    {
-        try
-        {
-            var userExist = _userService.GetUserAsync((int)projectForm.ProjectManagerId!);
-            var customerExist = _customerService.GetCustomerAsync((int)projectForm.CustomerId!);
-            var serviceExist = _serviceService.GetServiceAsync((int)projectForm.ServiceId!);
-
-            await Task.WhenAll(userExist, customerExist, serviceExist);
-
-            if (userExist.Result.Success == false) return (false, "user does not exist");
-            if (customerExist.Result.Success == false) return (false, "customer doesn not exist");
-            if (serviceExist.Result.Success == false) return (false, "service does not exist");
-
-            return (true, null);
-
-        } catch (Exception ex)
-        {
-            Debug.WriteLine(ex.Message);
-            return (false, "An Error occured");
-        }
     }
 
     private async Task<decimal> GetCalculatedPrice(ProjectRegistrationForm form)
