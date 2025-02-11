@@ -11,4 +11,6 @@ public interface IProjectService
     public Task<IResponseResult> CreateProjectAsync(ProjectRegistrationForm projectForm);
     public Task<IResponseResult> UpdateProjectAsync(int id, ProjectRegistrationForm projectForm);
     public Task<IResponseResult> DeleteProjectAsync(int id);
+
+    public IResponseResult GetAllStatuses();
 }

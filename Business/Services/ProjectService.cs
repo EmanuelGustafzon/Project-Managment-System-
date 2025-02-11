@@ -163,6 +163,27 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
         }
     }
 
+    public IResponseResult GetAllStatuses()
+    {
+        try
+        {
+            List<string> statusesAsString = [];
+
+            StatusStates[] units = Enum.GetValues<StatusStates>();
+            foreach (var item in units)
+            {
+                statusesAsString.Add(item.ToString());
+            }
+            return Result<List<string>>.Ok(statusesAsString);
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return Result.Error("Error retrieving units");
+        }
+    }
+
     // help methods
     private async Task<(int id, string? errorMessage)> CreateCustomerAndGetId(CustomerRegistrationForm form)
     {
