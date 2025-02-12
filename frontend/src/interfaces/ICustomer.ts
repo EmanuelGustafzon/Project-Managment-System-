@@ -3,3 +3,8 @@ export interface ICustomer {
     name: string;
     organisationNumber: string;
 }
+
+export interface ICustomerForm {
+    name: string;
+    organisationNumber: string;
+}

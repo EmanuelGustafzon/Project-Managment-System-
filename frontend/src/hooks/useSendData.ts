@@ -25,6 +25,7 @@ function useSendData(endpoint: string, url?: string) {
                 body: JSON.stringify(data)
             });
             const resData = await res.json();
+            console.log(resData);
             if (resData.errors != null) {
                 setvalidationError(resData.errors);
                 return;

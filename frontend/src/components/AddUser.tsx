@@ -16,7 +16,7 @@ const AddUser: React.FC<AddUserProps> = ({ onUserChange }) => {
             {data && <select className="select select-info w-full max-w-xs"
                 onChange={(e) => onUserChange({ id: e.target.value })}
                 defaultValue="">
-                <option disabled selected>Select User</option>
+                <option disabled value="">Select User</option>
                 {data && data.map(user => (
                     <option key={user.id} value={user.id}>
                         {user.firstName}

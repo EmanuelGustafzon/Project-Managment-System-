@@ -13,7 +13,6 @@ function useFetch<T = unknown>(endpoint: string, url?: string) {
             try {
                 const response = await fetch(`${url}/${endpoint}`);
                 const result = await response.json();
-                console.log(result)
                 if (result.ErrorMessage) {
                     setError(result.ErrorMessage);
                     return;

@@ -4,14 +4,18 @@ import { ICustomer } from "../interfaces/ICustomer";
 
 interface CustomerFormProps {
     onChooseCustomerChange: (customer: { id: string }) => void;
+    customerId?: number;
     onCreateCustomer: (createdCustomer: { name: string; organisationNumber: string }) => void;
     customer: { name: string, organisationNumber: string }
 }
-const AddCustomer: React.FC<CustomerFormProps> = ({ onChooseCustomerChange, onCreateCustomer, customer }) => {
+
+const AddCustomer: React.FC<CustomerFormProps> = ({ onChooseCustomerChange, onCreateCustomer, customer, customerId }) => {
+
     const [chooseOrCreate, setChooseOrCreate] = useState({
         choose: true,
         create: false
     });
+
     const { data, loading, error } = useFetch<ICustomer[]>('api/Customer');
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,11 +34,11 @@ const AddCustomer: React.FC<CustomerFormProps> = ({ onChooseCustomerChange, onCr
                     {error && <p>{error.toString()}</p>}
                     {loading && <p>loading users...</p>}
                     {data &&
-                        <select className="select select-info w-full max-w-xs"
-                            onChange={(e) => onChooseCustomerChange({ id: e.target.value })}
-                            defaultValue="">
-                            <option disabled selected>Select Customer</option>
-                            {data && data.map(customer => (
+                    <select className="select select-info w-full max-w-xs"
+                        onChange={(e) => onChooseCustomerChange({ id: e.target.value })}
+                        defaultValue={customerId || ""}>
+                        <option disabled value={customerId || ""}> {customerId && customerId > 0 ? data?.find(x => x.id == customerId)?.name : 'Select Customer'} </option>
+                        {data && data.map(customer => (
                                 <option key={customer.id} value={customer.id}>
                                     {customer.name}
                                 </option>
