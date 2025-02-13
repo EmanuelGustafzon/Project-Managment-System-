@@ -24,20 +24,30 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
         {
             return Result<List<ValidationResult>>.BadRequest(errors);
         }
-
         try
         {
             bool serviceExists = await _serviceRespository.EntityExistsAsync(x => x.Name == serviceForm.Name);
             if (serviceExists == true) return Result.AlreadyExists($"Service already exsist with the name: {serviceForm.Name}");
 
-            bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == serviceForm.CurrencyId);
-            if (currencyExists == false) return Result.NotFound($"Currency Id not found with the Id: {serviceForm.CurrencyId}");
+            int currencyId = 0;
+            var FoundCurrency = await _currencyRepository.GetAsync(x => x.Currency == serviceForm.Currency);
+            if (FoundCurrency == null)
+            {
+                var currencyForm = CurrencyFactory.CreateRegistrationForm(serviceForm.Currency);
+                var currency = await _currencyRepository.CreateAsync(CurrencyFactory.CreateEntity(currencyForm));
+                if (currency == null) return Result.Error("Could not create currency");
+                currencyId = currency.Id;
+            }
+            else currencyId = FoundCurrency.Id;
 
-            ServiceEntity serviceEntity = ServiceFactory.CreateEntity(serviceForm);
+            ServiceEntity serviceEntity = ServiceFactory.CreateEntity(serviceForm, currencyId);
             ServiceEntity createdEntityInDb = await _serviceRespository.CreateAsync(serviceEntity);
-
+            if(createdEntityInDb == null)
+            {
+                await _serviceRespository.RollbackTransactionAsync();
+                return Result.Error("Could not create service");
+            }
             ServiceDto serviceDto = ServiceFactory.CreateDto(createdEntityInDb);
-
             return Result<ServiceDto>.Created(serviceDto);
         }
         catch (Exception ex)
@@ -93,11 +103,23 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             bool serviceExists = await _serviceRespository.EntityExistsAsync(x => x.Id == id);
             if (serviceExists == false) return Result.NotFound($"Service not found with the id: {id}");
 
-            bool currencyExists = await _currencyRepository.EntityExistsAsync(x => x.Id == updatedForm.CurrencyId);
-            if (serviceExists == false) return Result.NotFound($"Currency Id not found with the Id: {updatedForm.CurrencyId}");
+            int currencyId = 0;
+            var FoundCurrency = await _currencyRepository.GetAsync(x => x.Currency == updatedForm.Currency);
+            if (FoundCurrency == null)
+            {
+                var currencyForm = CurrencyFactory.CreateRegistrationForm(updatedForm.Currency);
+                var currency = await _currencyRepository.CreateAsync(CurrencyFactory.CreateEntity(currencyForm));
+                if (currency == null) return Result.Error("Could not create currency");
+                currencyId = currency.Id;
+            }
+            else currencyId = FoundCurrency.Id;
 
-            var updatedServiceEntity = await _serviceRespository.UpdateAsync(x => x.Id == id, ServiceFactory.CreateEntity(id, updatedForm));
-            if(updatedServiceEntity == null) return Result.Error("Could not update service");
+            var updatedServiceEntity = await _serviceRespository.UpdateAsync(x => x.Id == id, ServiceFactory.CreateEntity(id, currencyId, updatedForm));
+            if (updatedServiceEntity == null)
+            {
+                await _serviceRespository.RollbackTransactionAsync();
+                return Result.Error("Could not update service");
+            }
             ServiceDto serviceDto = ServiceFactory.CreateDto(updatedServiceEntity);
             return Result<ServiceDto>.Ok(serviceDto);
         }

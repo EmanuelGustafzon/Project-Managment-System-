@@ -12,13 +12,12 @@ using System.Diagnostics;
 
 namespace Business.Services;
 
-public class ProjectService(DataContext dataContext, IProjectRepository projectRepository, ICustomerService customerService, IServiceService serviceService, IUserService userService) : IProjectService
+public class ProjectService(IProjectRepository projectRepository, ICustomerService customerService, IServiceService serviceService, IUserService userService) : IProjectService
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly IUserService _userService = userService;
     private readonly ICustomerService _customerService = customerService;
     private readonly IServiceService _serviceService = serviceService;
-    private readonly DataContext _dataContext = dataContext;
 
     public async Task<IResponseResult> CreateProjectAsync(ProjectRegistrationForm projectForm)
     {
@@ -26,31 +25,47 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
             return Result.BadRequest("Customer form or existing customer must be provided");
         if (projectForm.ServiceForm == null && projectForm.ServiceId == 0)
             return Result.BadRequest("Service form or existing service must be provided");
+        if (projectForm.UserForm == null && projectForm.ProjectManagerId == 0)
+            return Result.BadRequest("User form or project manager id of user must be proviced");
+
         List<ValidationResult> errors = ValidateRegistrationFormService.Validate<ProjectRegistrationForm>(projectForm);
         if (errors?.Count != 0 && errors != null)
         {
             return Result<List<ValidationResult>>.BadRequest(errors);
         }
-
-        using var transaction = await _dataContext.Database.BeginTransactionAsync();
-
+        await _projectRepository.BeginTransactionAsync();
         try
         {
             var projectExist = await _projectRepository.GetAsync(x => x.Name == projectForm.Name) != null; 
             if(projectExist == true) return Result.AlreadyExists("project name already exist");
 
+            if (projectForm.UserForm != null)
+            {
+                (int userId, string? errorMessage) = await CreateUserAndGetId(projectForm.UserForm);
+                if (userId != 0) projectForm.ProjectManagerId = userId;
+                else return Result.Error(errorMessage!);
+            }
+
             if (projectForm.CustomerForm != null)
             {
                 (int customerId, string? errorMessage) = await CreateCustomerAndGetId(projectForm.CustomerForm);
                 if (customerId != 0) projectForm.CustomerId = customerId;
-                else return Result.Error(errorMessage!);
-
+                else
+                {
+                    await _projectRepository.RollbackTransactionAsync();
+                    return Result.Error(errorMessage!);
+                }
             }
             if (projectForm.ServiceForm != null)
             {
                 (int serviceId, string? errorMessage) = await CreateServiceAndGetId(projectForm.ServiceForm);
-                if (serviceId != 0) projectForm.CustomerId = serviceId;
-                else return Result.Error(errorMessage!);
+                if (serviceId != 0) projectForm.ServiceId = serviceId;
+                else
+                {
+                    Debug.WriteLine("hi");
+                    await _projectRepository.RollbackTransactionAsync();
+                    return Result.Error(errorMessage!);
+                }
             }
 
             if(projectForm.TotalPrice == 0 || projectForm.TotalPrice == null)
@@ -61,14 +76,20 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
 
             var entity = ProjectFactory.CreateEntity(projectForm);
             ProjectEntity createdProject = await _projectRepository.CreateAsync(entity);
-            if (createdProject == null) return Result.Error("Could not creaye project");
+            if (createdProject == null)
+            {
+                await _projectRepository.RollbackTransactionAsync();
+                return Result.Error("Could not create project");
+            }
 
-            await transaction.CommitAsync();
+            await _projectRepository.CommitTransactionAsync();
+
             ProjectEntity fullProject = await _projectRepository.GetAsync(x => x.Id == createdProject.Id);
             return Result<ProjectDto>.Created(ProjectFactory.CreateDto(fullProject));
         }
         catch (Exception ex)
         {
+            await _projectRepository.RollbackTransactionAsync();
             Debug.WriteLine(ex.Message);
             return Result.Error("Could not create project");
         }
@@ -105,25 +126,52 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
     }
     public async Task<IResponseResult> UpdateProjectAsync(int id, ProjectRegistrationForm projectForm)
     {
-        using var transaction = await _dataContext.Database.BeginTransactionAsync();
+        if (projectForm.CustomerForm == null && projectForm.CustomerId == 0)
+            return Result.BadRequest("Customer form or existing customer must be provided");
+        if (projectForm.ServiceForm == null && projectForm.ServiceId == 0)
+            return Result.BadRequest("Service form or existing service must be provided");
+        if (projectForm.UserForm == null && projectForm.ProjectManagerId == 0)
+            return Result.BadRequest("User form or project manager id of user must be proviced");
+
+        List<ValidationResult> errors = ValidateRegistrationFormService.Validate<ProjectRegistrationForm>(projectForm);
+        if (errors?.Count != 0 && errors != null)
+        {
+            return Result<List<ValidationResult>>.BadRequest(errors);
+        }
+
+        await _projectRepository.BeginTransactionAsync();
 
         try
         {
             var projectExist = await _projectRepository.EntityExistsAsync(x => x.Id == id);
             if (projectExist == false) return Result.NotFound("project does not exist");
 
+            if (projectForm.UserForm != null)
+            {
+                (int userId, string? errorMessage) = await CreateUserAndGetId(projectForm.UserForm);
+                if (userId != 0) projectForm.ProjectManagerId = userId;
+                else return Result.Error(errorMessage!);
+            }
+
             if (projectForm.CustomerForm != null)
             {
                 (int customerId, string? errorMessage) = await CreateCustomerAndGetId(projectForm.CustomerForm);
                 if (customerId != 0) projectForm.CustomerId = customerId;
-                else return Result.Error(errorMessage!);
-
+                else
+                {
+                    await _projectRepository.RollbackTransactionAsync();
+                    return Result.Error(errorMessage!);
+                }
             }
             if (projectForm.ServiceForm != null)
             {
                 (int serviceId, string? errorMessage) = await CreateServiceAndGetId(projectForm.ServiceForm);
-                if (serviceId != 0) projectForm.CustomerId = serviceId;
-                else return Result.Error(errorMessage!);
+                if (serviceId != 0) projectForm.ServiceId = serviceId;
+                else
+                {
+                    await _projectRepository.RollbackTransactionAsync();
+                    return Result.Error(errorMessage!);
+                }
             }
 
             if (projectForm.TotalPrice == 0 || projectForm.TotalPrice == null)
@@ -134,13 +182,17 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
 
             var entity = ProjectFactory.CreateEntity(id, projectForm);
             ProjectEntity updatedProject = await _projectRepository.UpdateAsync(x => x.Id == id, entity);
-            if(updatedProject == null) return Result.Error("Could not update project");
-
-            await transaction.CommitAsync();
+            if (updatedProject == null)
+            {
+                await _projectRepository.RollbackTransactionAsync();
+                return Result.Error("Could not update project");
+            }
+            await _projectRepository.CommitTransactionAsync();
             return Result.Ok();
         }
         catch (Exception ex)
         {
+            await _projectRepository.RollbackTransactionAsync();
             Debug.WriteLine(ex.Message);
             return Result.Error("Could not update project");
         }
@@ -204,6 +256,18 @@ public class ProjectService(DataContext dataContext, IProjectRepository projectR
         {
             var serviceId = castResult.Data.Id;
             return (serviceId, null);
+
+        }
+        return (0, result.ErrorMessage);
+    }
+    private async Task<(int id, string? errorMessage)> CreateUserAndGetId(UserRegistrationForm form)
+    {
+        var result = await _userService.CreateUserAsync(form);
+        Result<UserDto>? castResult = result as Result<UserDto>;
+        if (castResult != null && castResult.Data?.Id != null)
+        {
+            var userId = castResult.Data.Id;
+            return (userId, null);
 
         }
         return (0, result.ErrorMessage);

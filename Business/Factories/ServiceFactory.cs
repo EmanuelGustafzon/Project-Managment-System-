@@ -19,18 +19,18 @@ public static class ServiceFactory
             Unit = serviceEntity.Unit.ToString()
         };
     }
-    public static ServiceEntity CreateEntity(ServiceRegistrationForm form) 
+    public static ServiceEntity CreateEntity(ServiceRegistrationForm form, int currencyId) 
     {
         return new ServiceEntity
         {
             Name = form.Name,
             Description = form.Description,
             Price = form.Price,
-            CurrencyId = form.CurrencyId,
+            CurrencyId = currencyId,
             Unit = Enum.TryParse<Units>(form.Unit, true, out var unit) ? unit : default
         };
     }
-    public static ServiceEntity CreateEntity(int id, ServiceRegistrationForm form)
+    public static ServiceEntity CreateEntity(int id, int currencyId, ServiceRegistrationForm form)
     {
         return new ServiceEntity
         {
@@ -38,7 +38,7 @@ public static class ServiceFactory
             Name = form.Name,
             Description = form.Description,
             Price = form.Price,
-            CurrencyId = form.CurrencyId,
+            CurrencyId = currencyId,
             Unit = Enum.TryParse<Units>(form.Unit, true, out var unit) ? unit : default
         };
     }

@@ -7,7 +7,6 @@ namespace Data.Interfaces;
 
 public interface IRepository<TEntity> where TEntity : class
 {
-    public DataContext GetContext();
     public Task<IEnumerable<TEntity>> GetAllAsync();
     public Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate);
 
@@ -18,4 +17,8 @@ public interface IRepository<TEntity> where TEntity : class
     public Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> predicate);
 
     public Task<bool> EntityExistsAsync(Expression<Func<TEntity, bool>> predicate);
+
+    public Task BeginTransactionAsync();
+    public Task CommitTransactionAsync();
+    public Task RollbackTransactionAsync();
 }

@@ -5,6 +5,10 @@ namespace Business.Factories;
 
 public static class CurrencyFactory
 {
+    public static CurrencyRegistrationForm CreateRegistrationForm(string currency)
+    {
+        return new CurrencyRegistrationForm { Currency = currency };
+    }
     public static CurrencyDto CreateDto(CurrencyEntity entity)
     {
         return new CurrencyDto { Id = entity.Id, Currency = entity.Currency};

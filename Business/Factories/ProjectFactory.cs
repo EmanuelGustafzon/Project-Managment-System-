@@ -50,7 +50,7 @@ public static class ProjectFactory
             StartTime = form.StartTime,
             EndTime = form.EndTime,
             Status = Enum.TryParse<StatusStates>(form.Status, true, out var unit) ? unit : default,
-            ProjectManagerId = form.ProjectManagerId,
+            ProjectManagerId = (int)form.ProjectManagerId!,
             ServiceId = (int)form.ServiceId!,
             CustomerId = (int)form.CustomerId!
         };
@@ -68,7 +68,7 @@ public static class ProjectFactory
             EndTime = form.EndTime,
             TotalPrice = (decimal)form.TotalPrice!,
             Status = Enum.TryParse<StatusStates>(form.Status, true, out var unit) ? unit : default,
-            ProjectManagerId = form.ProjectManagerId,
+            ProjectManagerId = (int)form.ProjectManagerId!,
             ServiceId = (int)form.ServiceId!,
             CustomerId = (int)form.CustomerId!
         };
