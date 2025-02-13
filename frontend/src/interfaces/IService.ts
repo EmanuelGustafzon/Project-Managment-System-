@@ -5,3 +5,9 @@ export interface IService {
     unit: string;
     price: number;
 }
+export interface IServiceForm {
+    name: string;
+    currency: string;
+    unit: string;
+    price: number;
+}

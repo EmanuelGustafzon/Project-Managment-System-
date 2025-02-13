@@ -17,6 +17,17 @@ const ProjectForm = () => {
         status: "",
         projectManagerId: 0,
         serviceId: 1,
+        serviceForm: {
+            name: "",
+            currency: "",
+            unit: "",
+            price: 0,
+        },
+        userForm: {
+            firstName: "",
+            lastName: "",
+            email: ""
+        },
         customerId: 0,
         customerForm:
         {
@@ -43,7 +54,16 @@ const ProjectForm = () => {
     const handleSelectUserChange = (user: { id: string }) => {
         setProjectForm(prev => ({
             ...prev,
-            projectManagerId: Number(user.id)
+            projectManagerId: Number(user.id),
+            userForm: {
+                firstName: "", lastName: "", email: ""
+            }
+        }));
+    };
+    const handleCreateUserChange = (createdUser: { firstName: string; lastName: string, email: string }) => {
+        setProjectForm(prev => ({
+            ...prev,
+            userForm: createdUser
         }));
     };
     // step 3 add customer
@@ -52,7 +72,7 @@ const ProjectForm = () => {
             ...prev,
             customerId: Number(customer.id),
             customerForm: {
-                name: "", organisationNumber : ""
+                name: "", organisationNumber: ""
             }
         }));
     };
@@ -62,10 +82,24 @@ const ProjectForm = () => {
             customerForm: createdCustomer,
             customerId: 0
         }));
-        console.log(projectForm)
     }
     // step 4 add service
-    //
+    const handleSelectServiceChange = (service: { id: string }) => {
+        setProjectForm(prev => ({
+            ...prev,
+            serviceId: Number(service.id),
+            serviceForm: {
+                name: "", currency: "", unit: "", price: 0
+            }
+        }));
+    };
+    const handleCreateServiceChange = (createdService: { name: string, currency: string, unit: string, price: number }) => {
+        setProjectForm(prev => ({
+            ...prev,
+            serviceForm: createdService,
+            serviceId: 0
+        }));
+    }
     // step 5 create project action
     const createProject = () => {
         if (projectForm.customerId > 0) projectForm.customerForm = null;
@@ -75,12 +109,12 @@ const ProjectForm = () => {
     return (
         <div className="bg-sky-100 p-3">
             {step === 0 && <AddProjectInfo onProjectInfoChange={handleProjectInfoChange} projectForm={projectForm} />}
-            {step === 1 && <AddUser onUserChange={handleSelectUserChange} />}
+            {step === 1 && <AddUser onChooseUserChange={handleSelectUserChange} onCreateUser={handleCreateUserChange} user={projectForm.userForm!} userId={projectForm.projectManagerId} />}
             {step === 2 && <AddCustomer onChooseCustomerChange={handleSelectCustomerChange} onCreateCustomer={handleCreateCustomerChange} customer={projectForm.customerForm!} customerId={projectForm.customerId} />}
-            {step === 3 && <AddService />}
+            {step === 3 && <AddService onChooseServiceChange={handleSelectServiceChange} onCreateService={handleCreateServiceChange} service={projectForm.serviceForm!} serviceId={projectForm.serviceId} />}
             {step === 4 &&
-                <div>
-                    <button className="btn" onClick={createProject}>submit</button>
+                <div className="text-center">
+                    <button className="btn btn-wide btn-neutral" onClick={createProject}>Create Project</button>
                     <ul>
                         {validationError &&
                             <div>
@@ -99,9 +133,9 @@ const ProjectForm = () => {
                     {response && <p>{response}</p> }
                 </div>}
             <div className="flex flex-wrap justify-center items-center gap-2 m-5">
-                <button className="btn" onClick={() => setStep(lastStep => lastStep - 1)}>Prev</button>
+                <button className="btn" onClick={() => setStep(lastStep => (lastStep - 1 + 5) % 5)}>Prev</button>
                 {step <= totalSteps }
-                <button className="btn"  onClick={() => setStep(lastStep => lastStep + 1)}>next</button>
+                <button className="btn"  onClick={() => setStep(lastStep => (lastStep + 1) % 5)}>next</button>
             </div>
             
         </div>
