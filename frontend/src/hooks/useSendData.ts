@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useBaseUrl } from "../contexts/BaseUrlContext";
 
 type ValidationErrorResponse = {
     errors: {
@@ -6,7 +7,7 @@ type ValidationErrorResponse = {
     };
 };
 function useSendData(method: string, endpoint: string, url?: string) {
-    const baseUrl = 'https://localhost:7172';
+    const baseUrl = useBaseUrl()
     if (!url) url = baseUrl;
 
     const [response, setResponse] = useState<string | null>(null)

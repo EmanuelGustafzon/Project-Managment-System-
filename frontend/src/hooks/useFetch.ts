@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-
+import { useBaseUrl } from "../contexts/BaseUrlContext";
 function useFetch<T = unknown>(endpoint: string, url?: string) {
-    const baseUrl = 'https://localhost:7172';
+    const baseUrl = useBaseUrl()
     if (!url) url = baseUrl;
 
     const [data, setData] = useState<T | null>(null);

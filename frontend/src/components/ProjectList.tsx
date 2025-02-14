@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import UpdateProjectForm from "./UpdateProjectForm";
 import ProjectItem from "./ProjectItem";
 import ProjectDetails from "./ProjectDetails";
+import { useBaseUrl } from "../contexts/BaseUrlContext";
 
 const ProjectList = () => {
     const { data, setData, loading, error } = useFetch<IProject[] | null>('api/Project');
@@ -13,6 +14,7 @@ const ProjectList = () => {
     const [projectToUpdate, setProjectToUpdate] = useState<IProject | null>(null);
     const [projectDetailsToShow, setProjectDetailsToShow] = useState<IProject | null>(null);
     const modalRef = useRef<HTMLDialogElement>(null);
+    const baseUrl = useBaseUrl()
 
     useEffect(() => {
         if (showModal) {
@@ -33,7 +35,7 @@ const ProjectList = () => {
         setShowModal(true)
     }
     const deleteProject = async (id: number) => {
-        const res = await fetch(`https://localhost:7172/api/Project/${id}`, {
+        const res = await fetch(`${baseUrl}/api/Project/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -58,7 +60,7 @@ const ProjectList = () => {
 
     return (
         <div className="overflow-x-auto text-align-center">
-            <dialog id="my_modal_1" open={showModal} className="modal bg-dark">
+            <dialog ref={modalRef} className="modal bg-dark">
                 <div className="modal-box">
                     {projectDetailsToShow !== null && <ProjectDetails project={projectDetailsToShow} />}
                     {projectToUpdate !== null && < UpdateProjectForm projectToUpdate={projectToUpdate} />}

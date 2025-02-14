@@ -31,7 +31,7 @@ const AddUser: React.FC<AddUserProps> = ({ onChooseUserChange, onCreateUser, use
                     {error && <p>{error.toString()}</p>}
                     {loading && <p>loading users...</p>}
                     {data &&
-                    <select className="select select-info w-full max-w-xs"
+                    <select className="select select-accent w-full max-w-xs"
                         onChange={(e) => onChooseUserChange({ id: e.target.value })}
                         defaultValue={userId || ""}>
                         <option disabled value={userId || ""}>{userId && userId > 0 ? data?.find(x => x.id == userId)?.firstName : 'Select User'}</option>

@@ -43,7 +43,7 @@ const AddService: React.FC<serviceFormProps> = ({ onChooseServiceChange, onCreat
                     {error && <p>{error.toString()}</p>}
                     {loading && <p>loading services...</p>}
                     {data &&
-                    <select className="select select-info w-full max-w-xs"
+                    <select className="select select-accent w-full max-w-xs"
                         onChange={(e) => onChooseServiceChange({ id: e.target.value })}
                         defaultValue={serviceId || ""}>
                         <option disabled value={serviceId || ""}> {serviceId && serviceId > 0 ? data?.find(x => x.id == serviceId)?.name : 'Select Service'} </option>
@@ -64,7 +64,7 @@ const AddService: React.FC<serviceFormProps> = ({ onChooseServiceChange, onCreat
                         type="text"
                         name="name"
                         placeholder="Service Name"
-                        className="input input-bordered input-info w-full max-w-xs mb-3" />
+                        className="input input-bordered input-accent w-full max-w-xs mb-3" />
                     <label className="w-full max-w-xs">
                         <p>Choose a currancy or type your own:</p>
                         <input
@@ -73,7 +73,7 @@ const AddService: React.FC<serviceFormProps> = ({ onChooseServiceChange, onCreat
                             list="currancies"
                             name="currancy"
                             onChange={handleChange}
-                            className="input input-bordered input-info w-full max-w-xs mb-2" />
+                            className="input input-bordered input-accent w-full max-w-xs mb-2" />
                                 {customerData.loading && <p>loading currencies...</p>}
                                     <datalist id="currancies">
                                         {customerData.data &&
@@ -90,14 +90,14 @@ const AddService: React.FC<serviceFormProps> = ({ onChooseServiceChange, onCreat
                             type="number"
                             name="price"
                             placeholder="ex: 200"
-                            className="input input-bordered input-info w-full max-w-xs" />
+                            className="input input-bordered input-accent w-full max-w-xs" />
                     </label>
                     
 
                     {units.error && <p>{units.error.toString()}</p>}
                     {units.loading && <p>loading units...</p>}
                     {units.data &&
-                        <select className="select select-info w-full max-w-xs"
+                        <select className="select select-accent w-full max-w-xs"
                             onChange={handleChange}
                             name="unit"
                             defaultValue={service.unit || ""}>

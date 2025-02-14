@@ -34,7 +34,7 @@ const AddCustomer: React.FC<CustomerFormProps> = ({ onChooseCustomerChange, onCr
                     {error && <p>{error.toString()}</p>}
                     {loading && <p>loading users...</p>}
                     {data &&
-                    <select className="select select-info w-full max-w-xs"
+                    <select className="select select-accent w-full max-w-xs"
                         onChange={(e) => onChooseCustomerChange({ id: e.target.value })}
                         defaultValue={customerId || ""}>
                         <option disabled value={customerId || ""}> {customerId && customerId > 0 ? data?.find(x => x.id == customerId)?.name : 'Select Customer'} </option>
@@ -55,14 +55,14 @@ const AddCustomer: React.FC<CustomerFormProps> = ({ onChooseCustomerChange, onCr
                         type="text"
                         name="name"
                         placeholder="Customer Name"
-                        className="input input-bordered input-info w-full max-w-xs mb-3" />
+                        className="input input-bordered input-accent w-full max-w-xs mb-3" />
                     <input
                         value={customer.organisationNumber}
                         onChange={handleChange}
                         type="text"
                         name="organisationNumber"
                         placeholder="Organisation number"
-                        className="input input-bordered input-info w-full max-w-xs" />
+                    className="input input-bordered input-accent w-full max-w-xs" />
                 </>
             }
         </div>

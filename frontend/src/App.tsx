@@ -1,23 +1,32 @@
 
+import { useEffect, useState, useRef } from 'react';
 import './App.css'
 import Navbar from './components/Navbar'
 import ProjectForm from './components/ProjectForm'
 import ProjectList from './components/ProjectList'
 
 function App() {
+    const [showModal, setShowModal] = useState(false);
+    const modalRef = useRef<HTMLDialogElement>(null);
+
+    useEffect(() => {
+        if (showModal) {
+            modalRef.current?.showModal();
+        } else {
+            modalRef.current?.close();
+        }
+    }, [showModal]);
 
   return (
       <div className="mt-0">
-          <Navbar createProject={() => document.getElementById('createModal').showModal()!} /> 
+          <Navbar createProject={() => setShowModal(true)} /> 
           <ProjectList />
           
-          <dialog id="createModal" className="modal bg-dark">
+          <dialog ref={modalRef} className="modal">
               <div className="modal-box bg-zinc-900">
                   <ProjectForm />
                   <div className="modal-action">
-                      <form method="dialog">
-                          <button className="btn">Close</button>
-                      </form>
+                      <button onClick={() => setShowModal(false)} className="btn">Close</button>
                   </div>
               </div>
           </dialog>
