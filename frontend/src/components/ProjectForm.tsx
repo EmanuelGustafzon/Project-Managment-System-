@@ -16,7 +16,7 @@ const ProjectForm = () => {
         endTime: "",
         status: "",
         projectManagerId: 0,
-        serviceId: 1,
+        serviceId: 0,
         serviceForm: {
             name: "",
             currency: "",
@@ -101,7 +101,8 @@ const ProjectForm = () => {
         }));
     }
     // step 5 create project action
-    const createProject = () => {
+    const createProject = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         if (projectForm.customerId > 0) projectForm.customerForm = null;
         makeRequest(projectForm);
     }

@@ -6,7 +6,7 @@ function useFetch<T = unknown>(endpoint: string, url?: string) {
 
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const getData = async () => {
@@ -18,13 +18,8 @@ function useFetch<T = unknown>(endpoint: string, url?: string) {
                     return;
                 }
                 setData(result.data);
-            } catch (error) {
-                if (error instanceof Error) {
-                    setError(error);
-                } else {
-                    setError(new Error("An error occured, please try again."));
-                }
-
+            } catch {
+                setError("An error occured, please try again.");
             } finally {
                 setLoading(false)
             }
@@ -36,6 +31,7 @@ function useFetch<T = unknown>(endpoint: string, url?: string) {
 
     return {
         data,
+        setData,
         loading,
         error
     };
