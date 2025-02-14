@@ -5,7 +5,7 @@ type ValidationErrorResponse = {
         [field: string]: string[];
     };
 };
-function useSendData(endpoint: string, url?: string) {
+function useSendData(method: string, endpoint: string, url?: string) {
     const baseUrl = 'https://localhost:7172';
     if (!url) url = baseUrl;
 
@@ -18,7 +18,7 @@ function useSendData(endpoint: string, url?: string) {
         setLoading(true)
         try {
             const res = await fetch(`${url}/${endpoint}`, {
-                method: "POST",
+                method: `${method}`,
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -40,7 +40,7 @@ function useSendData(endpoint: string, url?: string) {
         } finally {
             setLoading(false)
         }
-    }, [endpoint, url])
+    }, [method, endpoint, url])
 
     return {
         makeRequest,

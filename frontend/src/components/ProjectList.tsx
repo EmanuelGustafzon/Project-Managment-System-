@@ -2,26 +2,26 @@
 import { IProject } from "../interfaces/IProject";
 import useFetch from "../hooks/useFetch";
 import { useState } from "react";
+import UpdateProjectForm from "./UpdateProjectForm";
 
-const Project = ({ project, deleteAction }: { project: IProject, deleteAction: (id: number) => void }) => {
+const Project = ({ project, deleteAction, updateAction }: { project: IProject, deleteAction: (id: number) => void, updateAction: (project: IProject) => void }) => {
  
     return (
         <>
-            <tbody>
-                <tr>
-                    <td>{project.name}</td>
-                    <td>{project.status}</td>
-                    <td>{project.totalPrice}</td>
-                    <td>{`${project.projectManager.firstName} ${project.projectManager.lastName}`}</td>
-                    <td>{project.service.name}</td>
-                    <td>{project.customer.name}</td>
-                    <div>
-                        <button className="btn">update</button>
-                        <button onClick={() => deleteAction(project.id)} className="btn">delete</button>
-                    </div>
-                    
-                </tr>
-            </tbody>
+            <tbody onClick={() => alert("hi") }>
+                    <tr>
+                        <td>{project.name}</td>
+                        <td>{project.status}</td>
+                        <td>{project.totalPrice}</td>
+                        <td>{`${project.projectManager.firstName} ${project.projectManager.lastName}`}</td>
+                        <td>{project.service.name}</td>
+                        <td>{project.customer.name}</td>
+                        <td>
+                            <button onClick={() => updateAction(project)} className="btn">update</button>
+                            <button onClick={() => deleteAction(project.id)} className="btn">delete</button>
+                        </td>
+                    </tr>
+                </tbody>
         </>
     );
 }
@@ -29,7 +29,12 @@ const Project = ({ project, deleteAction }: { project: IProject, deleteAction: (
 const ProjectList = () => {
     const { data, setData, loading, error } = useFetch<IProject[] | null>('api/Project');
     const [deleteActionOccured, setDeleteActionOccured] = useState<string | null>(null);
+    const [projectToUpdate, setProjectToUpdate] = useState<IProject | null>(null);
 
+    const updateProject = (project: IProject) => {
+        setProjectToUpdate(project)
+        document.getElementById('my_modal_1').showModal()!
+    }
     const deleteProject = async (id: number) => {
         const res = await fetch(`https://localhost:7172/api/Project/${id}`, {
             method: "DELETE",
@@ -51,6 +56,16 @@ const ProjectList = () => {
 
     return (
         <div className="overflow-x-auto text-align-center">
+            <dialog id="my_modal_1" className="modal bg-dark">
+                <div className="modal-box bg-zinc-900">
+                    {projectToUpdate && < UpdateProjectForm projectToUpdate={projectToUpdate} />}
+                    <div className="modal-action">
+                        <form method="dialog">
+                            <button className="btn">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
             {deleteActionOccured &&
                 <div className="toast toast-top toast-start z-10">
                     <div className="alert">
@@ -77,9 +92,10 @@ const ProjectList = () => {
                             return (
                                 <Project
                                     deleteAction={deleteProject}
+                                    updateAction={updateProject}
                                     key={project.id}
                                     project={project}
-                                />
+                                    />
                             );
                         })
                     }

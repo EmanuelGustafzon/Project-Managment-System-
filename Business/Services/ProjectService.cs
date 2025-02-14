@@ -39,14 +39,14 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
             var projectExist = await _projectRepository.GetAsync(x => x.Name == projectForm.Name) != null; 
             if(projectExist == true) return Result.AlreadyExists("project name already exist");
 
-            if (projectForm.UserForm != null)
+            if (projectForm.UserForm != null && projectForm.ProjectManagerId > 0)
             {
                 (int userId, string? errorMessage) = await CreateUserAndGetId(projectForm.UserForm);
                 if (userId != 0) projectForm.ProjectManagerId = userId;
                 else return Result.Error(errorMessage!);
             }
 
-            if (projectForm.CustomerForm != null)
+            if (projectForm.CustomerForm != null && projectForm.CustomerId > 0)
             {
                 (int customerId, string? errorMessage) = await CreateCustomerAndGetId(projectForm.CustomerForm);
                 if (customerId != 0) projectForm.CustomerId = customerId;
@@ -56,7 +56,7 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
                     return Result.Error(errorMessage!);
                 }
             }
-            if (projectForm.ServiceForm != null)
+            if (projectForm.ServiceForm != null && projectForm.ServiceId > 0)
             {
                 (int serviceId, string? errorMessage) = await CreateServiceAndGetId(projectForm.ServiceForm);
                 if (serviceId != 0) projectForm.ServiceId = serviceId;
@@ -146,14 +146,14 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
             var projectExist = await _projectRepository.EntityExistsAsync(x => x.Id == id);
             if (projectExist == false) return Result.NotFound("project does not exist");
 
-            if (projectForm.UserForm != null)
+            if (projectForm.UserForm != null && projectForm.ProjectManagerId > 0)
             {
                 (int userId, string? errorMessage) = await CreateUserAndGetId(projectForm.UserForm);
                 if (userId != 0) projectForm.ProjectManagerId = userId;
                 else return Result.Error(errorMessage!);
             }
 
-            if (projectForm.CustomerForm != null)
+            if (projectForm.CustomerForm != null && projectForm.CustomerId > 0)
             {
                 (int customerId, string? errorMessage) = await CreateCustomerAndGetId(projectForm.CustomerForm);
                 if (customerId != 0) projectForm.CustomerId = customerId;
@@ -163,7 +163,7 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
                     return Result.Error(errorMessage!);
                 }
             }
-            if (projectForm.ServiceForm != null)
+            if (projectForm.ServiceForm != null && projectForm.ServiceId > 0)
             {
                 (int serviceId, string? errorMessage) = await CreateServiceAndGetId(projectForm.ServiceForm);
                 if (serviceId != 0) projectForm.ServiceId = serviceId;

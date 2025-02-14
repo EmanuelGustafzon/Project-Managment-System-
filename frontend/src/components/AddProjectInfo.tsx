@@ -27,14 +27,14 @@ const AddProjectInfo: React.FC<ProjectInformationProps> = ({ onProjectInfoChange
             <h2>Start Date </h2>
             <input
                 onChange={handleChange}
-                value={projectForm.startTime}
+                value={projectForm.startTime.split("T")[0]}
                 name="startTime"
                 type = "date"
                 className = "input input-bordered input-info w-full max-w-xs" />
             <h2>End Date </h2>
             <input
                 onChange={handleChange}
-                value={projectForm.endTime}
+                value={projectForm.endTime.split("T")[0]}
                 name="endTime"
                 type = "date"
                 className = "input input-bordered input-info w-full max-w-xs" />

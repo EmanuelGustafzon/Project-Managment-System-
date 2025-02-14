@@ -5,30 +5,31 @@ import AddProjectInfo from "./AddProjectInfo";
 import { IProjectForm } from "../interfaces/IProjectForm";
 import AddService from "./AddService";
 import useSendData from "../hooks/useSendData";
+import { IProject } from "../interfaces/IProject";
 
 
-const ProjectForm = () => {
-    const { makeRequest, validationError, error, response } = useSendData("POST", "api/Project")
-    
+const UpdateProjectForm = ({ projectToUpdate }: { projectToUpdate: IProject }) => {
+    const { makeRequest, validationError, error, response } = useSendData("PUT", `api/Project/${projectToUpdate.id}`)
+
     const [projectForm, setProjectForm] = useState<IProjectForm>({
-        name: "",
-        startTime: "",
-        endTime: "",
-        status: "",
-        projectManagerId: 0,
-        serviceId: 0,
+        name: (projectToUpdate?.name ? projectToUpdate.name : ""),
+        startTime: (projectToUpdate?.startTime ? projectToUpdate.startTime : ""),
+        endTime: (projectToUpdate?.endTime ? projectToUpdate.endTime : ""),
+        status: (projectToUpdate?.status ? projectToUpdate.status : ""),
+        projectManagerId: (projectToUpdate?.projectManager.id ? projectToUpdate.projectManager.id : 0),
+        userForm: {
+            firstName: "",
+            lastName: "",
+            email: ""
+        },
+        serviceId: (projectToUpdate?.service.id ? projectToUpdate.service.id : 0),
         serviceForm: {
             name: "",
             currency: "",
             unit: "",
             price: 0,
         },
-        userForm: {
-            firstName: "",
-            lastName: "",
-            email: ""
-        },
-        customerId: 0,
+        customerId: (projectToUpdate?.customer.id ? projectToUpdate.customer.id : 0),
         customerForm:
         {
             name: "",
@@ -36,12 +37,12 @@ const ProjectForm = () => {
         }
     });
 
-    
+
     // form steps
     const totalSteps = 5;
     const [step, setStep] = useState(0);
     // step 1 add info about project
-    const handleProjectInfoChange = (projectForm : { name: string, startTime: string, endTime: string, status: string }) => {
+    const handleProjectInfoChange = (projectForm: { name: string, startTime: string, endTime: string, status: string }) => {
         setProjectForm(prev => ({
             ...prev,
             name: projectForm.name,
@@ -101,10 +102,13 @@ const ProjectForm = () => {
         }));
     }
     // step 5 create project action
-    const createProject = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const createProject = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        if (projectForm.customerId > 0) projectForm.customerForm = null;
-        makeRequest(projectForm);
+        const mappedValues = projectForm;
+        if (mappedValues.projectManagerId > 0) mappedValues.userForm = null;
+        if (mappedValues.customerId > 0) mappedValues.customerForm = null;
+        if (mappedValues.serviceId > 0) mappedValues.serviceForm = null;
+        await makeRequest(mappedValues); 
     }
 
     return (
@@ -115,7 +119,7 @@ const ProjectForm = () => {
             {step === 3 && <AddService onChooseServiceChange={handleSelectServiceChange} onCreateService={handleCreateServiceChange} service={projectForm.serviceForm!} serviceId={projectForm.serviceId} />}
             {step === 4 &&
                 <div className="text-center">
-                    <button className="btn btn-wide btn-neutral" onClick={createProject}>Create Project</button>
+                    <button className="btn btn-wide btn-neutral" onClick={createProject}>Update Project</button>
                     <ul>
                         {validationError &&
                             <div>
@@ -131,16 +135,16 @@ const ProjectForm = () => {
                     </ul>
                     {error && <p className="text-red-400">{error}</p>}
                     {error && <p className="text-red-400">{error}</p>}
-                    {response && <p>{response}</p> }
+                    {response !== "" && <p>Updated successfully</p>}
                 </div>}
             <div className="flex flex-wrap justify-center items-center gap-2 m-5">
                 <button className="btn" onClick={() => setStep(lastStep => (lastStep - 1 + 5) % 5)}>Prev</button>
-                {step <= totalSteps }
-                <button className="btn"  onClick={() => setStep(lastStep => (lastStep + 1) % 5)}>next</button>
+                {step <= totalSteps}
+                <button className="btn" onClick={() => setStep(lastStep => (lastStep + 1) % 5)}>next</button>
             </div>
-            
+
         </div>
     )
 }
 
-export default ProjectForm;
+export default UpdateProjectForm;
