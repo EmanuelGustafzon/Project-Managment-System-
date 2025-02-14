@@ -8,10 +8,10 @@ function App() {
 
   return (
       <div className="mt-0">
-          <Navbar createProject={() => document.getElementById('my_modal_1').showModal()!} /> 
+          <Navbar createProject={() => document.getElementById('createModal').showModal()!} /> 
           <ProjectList />
           
-          <dialog id="my_modal_1" className="modal bg-dark">
+          <dialog id="createModal" className="modal bg-dark">
               <div className="modal-box bg-zinc-900">
                   <ProjectForm />
                   <div className="modal-action">

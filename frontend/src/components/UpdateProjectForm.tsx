@@ -112,7 +112,7 @@ const UpdateProjectForm = ({ projectToUpdate }: { projectToUpdate: IProject }) =
     }
 
     return (
-        <div className="bg-sky-100 p-3">
+        <div className=" p-3">
             {step === 0 && <AddProjectInfo onProjectInfoChange={handleProjectInfoChange} projectForm={projectForm} />}
             {step === 1 && <AddUser onChooseUserChange={handleSelectUserChange} onCreateUser={handleCreateUserChange} user={projectForm.userForm!} userId={projectForm.projectManagerId} />}
             {step === 2 && <AddCustomer onChooseCustomerChange={handleSelectCustomerChange} onCreateCustomer={handleCreateCustomerChange} customer={projectForm.customerForm!} customerId={projectForm.customerId} />}
@@ -135,7 +135,7 @@ const UpdateProjectForm = ({ projectToUpdate }: { projectToUpdate: IProject }) =
                     </ul>
                     {error && <p className="text-red-400">{error}</p>}
                     {error && <p className="text-red-400">{error}</p>}
-                    {response !== "" && <p>Updated successfully</p>}
+                    {response !== null && <p>successfully created project</p>}
                 </div>}
             <div className="flex flex-wrap justify-center items-center gap-2 m-5">
                 <button className="btn" onClick={() => setStep(lastStep => (lastStep - 1 + 5) % 5)}>Prev</button>

@@ -23,26 +23,26 @@ const AddProjectInfo: React.FC<ProjectInformationProps> = ({ onProjectInfoChange
                 type="text"
                 name="name"
                 placeholder = "Name"
-                className = "input input-bordered input-info w-full max-w-xs" />
+                className = "input input-bordered input-accent w-full max-w-xs" />
             <h2>Start Date </h2>
             <input
                 onChange={handleChange}
                 value={projectForm.startTime.split("T")[0]}
                 name="startTime"
                 type = "date"
-                className = "input input-bordered input-info w-full max-w-xs" />
+                className= "input input-bordered input-accent w-full max-w-xs" />
             <h2>End Date </h2>
             <input
                 onChange={handleChange}
                 value={projectForm.endTime.split("T")[0]}
                 name="endTime"
                 type = "date"
-                className = "input input-bordered input-info w-full max-w-xs" />
+                className= "input input-bordered input-accent w-full max-w-xs" />
             <h2>Status </h2>
             { error && <p>{ error.toString() } </p> }
             { loading && <p>loading users...</p> }
             { data &&
-                <select className="select select-info w-full max-w-xs"
+                <select className="select select-accent w-full max-w-xs"
                     onChange={handleChange}
                     name="status"
                     defaultValue={projectForm.status} >

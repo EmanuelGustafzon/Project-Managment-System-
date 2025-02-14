@@ -7,7 +7,7 @@ const Navbar = ({ createProject }: { createProject: () => void}) => {
                 <a className="btn btn-ghost text-xl">Project Manager</a>
             </div>
             <div className="navbar-end">
-                <button onClick={createProject} className="btn">create project</button>
+                <button onClick={createProject} className="btn btn-accent">create project</button>
             </div>
         </div>
     )

@@ -52,21 +52,21 @@ const AddUser: React.FC<AddUserProps> = ({ onChooseUserChange, onCreateUser, use
                         type="text"
                         name="firstName"
                         placeholder="user firstname"
-                        className="input input-bordered input-info w-full max-w-xs mb-3" />
+                    className="input input-bordered input-accent w-full max-w-xs mb-3" />
                     <input
                         value={user.lastName}
                         onChange={handleChange}
                         type="text"
                         name="lastName"
                         placeholder="user lastname"
-                        className="input input-bordered input-info w-full max-w-xs mb-3" />
+                    className="input input-bordered input-accent w-full max-w-xs mb-3" />
                     <input
                         value={user.email}
                         onChange={handleChange}
                         type="text"
                         name="email"
                         placeholder="user email"
-                        className="input input-bordered input-info w-full max-w-xs mb-3" />
+                    className="input input-bordered input-accent w-full max-w-xs mb-3" />
                 </>
             }
         </div>

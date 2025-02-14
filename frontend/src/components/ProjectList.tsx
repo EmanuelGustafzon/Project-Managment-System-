@@ -1,39 +1,36 @@
 
 import { IProject } from "../interfaces/IProject";
 import useFetch from "../hooks/useFetch";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UpdateProjectForm from "./UpdateProjectForm";
-
-const Project = ({ project, deleteAction, updateAction }: { project: IProject, deleteAction: (id: number) => void, updateAction: (project: IProject) => void }) => {
- 
-    return (
-        <>
-            <tbody onClick={() => alert("hi") }>
-                    <tr>
-                        <td>{project.name}</td>
-                        <td>{project.status}</td>
-                        <td>{project.totalPrice}</td>
-                        <td>{`${project.projectManager.firstName} ${project.projectManager.lastName}`}</td>
-                        <td>{project.service.name}</td>
-                        <td>{project.customer.name}</td>
-                        <td>
-                            <button onClick={() => updateAction(project)} className="btn">update</button>
-                            <button onClick={() => deleteAction(project.id)} className="btn">delete</button>
-                        </td>
-                    </tr>
-                </tbody>
-        </>
-    );
-}
+import ProjectItem from "./ProjectItem";
+import ProjectDetails from "./ProjectDetails";
 
 const ProjectList = () => {
     const { data, setData, loading, error } = useFetch<IProject[] | null>('api/Project');
+    const [showModal, setShowModal] = useState(false);
     const [deleteActionOccured, setDeleteActionOccured] = useState<string | null>(null);
     const [projectToUpdate, setProjectToUpdate] = useState<IProject | null>(null);
+    const [projectDetailsToShow, setProjectDetailsToShow] = useState<IProject | null>(null);
+    const modalRef = useRef<HTMLDialogElement>(null);
 
+    useEffect(() => {
+        if (showModal) {
+            modalRef.current?.showModal();
+        } else {
+            modalRef.current?.close();
+        }
+    }, [showModal]);
+
+    const projectDetails = (project: IProject) => {
+        setProjectDetailsToShow(project);
+        setProjectToUpdate(null)
+        setShowModal(true)
+    }
     const updateProject = (project: IProject) => {
+        setProjectDetailsToShow(null);
         setProjectToUpdate(project)
-        document.getElementById('my_modal_1').showModal()!
+        setShowModal(true)
     }
     const deleteProject = async (id: number) => {
         const res = await fetch(`https://localhost:7172/api/Project/${id}`, {
@@ -53,16 +50,20 @@ const ProjectList = () => {
             resolve(null);
         }, 4000));
     }
+    const closeModel = () => {
+        setShowModal(false)
+        setProjectDetailsToShow(null);
+        setProjectToUpdate(null)
+    }
 
     return (
         <div className="overflow-x-auto text-align-center">
-            <dialog id="my_modal_1" className="modal bg-dark">
-                <div className="modal-box bg-zinc-900">
-                    {projectToUpdate && < UpdateProjectForm projectToUpdate={projectToUpdate} />}
+            <dialog id="my_modal_1" open={showModal} className="modal bg-dark">
+                <div className="modal-box">
+                    {projectDetailsToShow !== null && <ProjectDetails project={projectDetailsToShow} />}
+                    {projectToUpdate !== null && < UpdateProjectForm projectToUpdate={projectToUpdate} />}
                     <div className="modal-action">
-                        <form method="dialog">
-                            <button className="btn">Close</button>
-                        </form>
+                            <button onClick={closeModel} className="btn">Close</button>
                     </div>
                 </div>
             </dialog>
@@ -81,7 +82,6 @@ const ProjectList = () => {
                         <tr>
                             <td>Name</td>
                             <td>Status</td>
-                            <td>TotalPrice</td>
                             <td>ProjectManager</td>
                             <td>Service</td>
                             <td>Customer</td>
@@ -90,7 +90,8 @@ const ProjectList = () => {
                     {
                         data && data.map((project: IProject) => {
                             return (
-                                <Project
+                                <ProjectItem
+                                    detailsAction={projectDetails}
                                     deleteAction={deleteProject}
                                     updateAction={updateProject}
                                     key={project.id}

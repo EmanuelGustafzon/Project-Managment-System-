@@ -101,14 +101,17 @@ const ProjectForm = () => {
         }));
     }
     // step 5 create project action
-    const createProject = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const createProject = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        if (projectForm.customerId > 0) projectForm.customerForm = null;
-        makeRequest(projectForm);
+        const mappedValues = projectForm;
+        if (mappedValues.projectManagerId > 0) mappedValues.userForm = null;
+        if (mappedValues.customerId > 0) mappedValues.customerForm = null;
+        if (mappedValues.serviceId > 0) mappedValues.serviceForm = null;
+        await makeRequest(mappedValues); 
     }
 
     return (
-        <div className="bg-sky-100 p-3">
+        <div className="p-3">
             {step === 0 && <AddProjectInfo onProjectInfoChange={handleProjectInfoChange} projectForm={projectForm} />}
             {step === 1 && <AddUser onChooseUserChange={handleSelectUserChange} onCreateUser={handleCreateUserChange} user={projectForm.userForm!} userId={projectForm.projectManagerId} />}
             {step === 2 && <AddCustomer onChooseCustomerChange={handleSelectCustomerChange} onCreateCustomer={handleCreateCustomerChange} customer={projectForm.customerForm!} customerId={projectForm.customerId} />}
@@ -131,7 +134,7 @@ const ProjectForm = () => {
                     </ul>
                     {error && <p className="text-red-400">{error}</p>}
                     {error && <p className="text-red-400">{error}</p>}
-                    {response && <p>{response}</p> }
+                    {response && <p>successfully created project</p> }
                 </div>}
             <div className="flex flex-wrap justify-center items-center gap-2 m-5">
                 <button className="btn" onClick={() => setStep(lastStep => (lastStep - 1 + 5) % 5)}>Prev</button>
