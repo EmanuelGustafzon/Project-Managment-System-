@@ -34,6 +34,8 @@ function useSendData(method: string, endpoint: string, url?: string) {
                 setError(resData.ErrrMessge);
                 return;
             }
+            setError(undefined);
+            setvalidationError(undefined);
             setResponse(resData.data)
         } catch {
             setError('An error occured')

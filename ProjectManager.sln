@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagementAPI", "Pro
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "frontend", "frontend\frontend.esproj", "{F28925AA-EC26-4BF0-B0FF-89ADE0764F0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManagerBackend_Tests", "ProjectManagerBackend_Tests\ProjectManagerBackend_Tests.csproj", "{ECBEDA95-8AC7-4676-9A36-F326CF72DB47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{F28925AA-EC26-4BF0-B0FF-89ADE0764F0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F28925AA-EC26-4BF0-B0FF-89ADE0764F0B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F28925AA-EC26-4BF0-B0FF-89ADE0764F0B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{ECBEDA95-8AC7-4676-9A36-F326CF72DB47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECBEDA95-8AC7-4676-9A36-F326CF72DB47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECBEDA95-8AC7-4676-9A36-F326CF72DB47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECBEDA95-8AC7-4676-9A36-F326CF72DB47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

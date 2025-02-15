@@ -118,7 +118,7 @@ const ProjectForm = () => {
             {step === 3 && <AddService onChooseServiceChange={handleSelectServiceChange} onCreateService={handleCreateServiceChange} service={projectForm.serviceForm!} serviceId={projectForm.serviceId} />}
             {step === 4 &&
                 <div className="text-center">
-                    <button className="btn btn-wide btn-neutral" onClick={createProject}>Create Project</button>
+                    <button className="btn btn-wide btn-accent" onClick={createProject}>Create Project</button>
                     <ul>
                         {validationError &&
                             <div>
@@ -133,7 +133,6 @@ const ProjectForm = () => {
                         }
                     </ul>
                     {loading && <p>loading...</p> }
-                    {error && <p className="text-red-400">{error}</p>}
                     {error && <p className="text-red-400">{error}</p>}
                     {response && <p>successfully created project</p> }
                 </div>}

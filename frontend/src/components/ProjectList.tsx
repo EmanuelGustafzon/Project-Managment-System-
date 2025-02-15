@@ -44,18 +44,17 @@ const ProjectList = () => {
         if (res.status === 204) {
             setData((prev) => (prev ? prev.filter((x) => x.id !== id) : []));
             setDeleteActionOccured("Successfully deleted project")
+            setShowModal(true)
             return;
         }
         setDeleteActionOccured("failed to delete project")
-        await new Promise((resolve) => setTimeout(() => {
-            setDeleteActionOccured(null);
-            resolve(null);
-        }, 4000));
+        setShowModal(true)
     }
     const closeModel = () => {
         setShowModal(false)
         setProjectDetailsToShow(null);
         setProjectToUpdate(null)
+        setDeleteActionOccured(null);
     }
 
     return (
@@ -64,18 +63,16 @@ const ProjectList = () => {
                 <div className="modal-box">
                     {projectDetailsToShow !== null && <ProjectDetails project={projectDetailsToShow} />}
                     {projectToUpdate !== null && < UpdateProjectForm projectToUpdate={projectToUpdate} />}
+                    {deleteActionOccured !== null &&
+                        <div>
+                            <span>{deleteActionOccured}</span>
+                        </div>
+                    }
                     <div className="modal-action">
                             <button onClick={closeModel} className="btn">Close</button>
                     </div>
                 </div>
             </dialog>
-            {deleteActionOccured &&
-                <div className="toast toast-top toast-start z-10">
-                    <div className="alert">
-                        <span>{deleteActionOccured}</span>
-                    </div>
-                </div>
-            }
             {error && <p>...</p>}
             {loading && <p>LOADING...</p> }
             { data &&

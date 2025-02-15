@@ -119,7 +119,7 @@ const UpdateProjectForm = ({ projectToUpdate }: { projectToUpdate: IProject }) =
             {step === 3 && <AddService onChooseServiceChange={handleSelectServiceChange} onCreateService={handleCreateServiceChange} service={projectForm.serviceForm!} serviceId={projectForm.serviceId} />}
             {step === 4 &&
                 <div className="text-center">
-                    <button className="btn btn-wide btn-neutral" onClick={createProject}>Update Project</button>
+                    <button className="btn btn-wide btn-accent" onClick={createProject}>Update Project</button>
                     <ul>
                         {validationError &&
                             <div>
