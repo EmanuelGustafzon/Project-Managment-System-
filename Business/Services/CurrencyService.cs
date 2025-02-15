@@ -47,6 +47,23 @@ public class CurrencyService(ICurrencyRepository currencyRepository) : ICurrency
             return Result.Error("Failed to get the currency");
         }
     }
+    public async Task<IResponseResult> GetCurrencyAsync(string currency)
+    {
+        try
+        {
+            var currencyEntity = await _currencyRepository.GetAsync(x => x.Currency == currency);
+            if (currencyEntity == null) return Result.NotFound("The currency was not found");
+
+            CurrencyDto currencyResponseDto = CurrencyFactory.CreateDto(currencyEntity);
+
+            return Result<CurrencyDto>.Ok(currencyResponseDto);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return Result.Error("Failed to get the currency");
+        }
+    }
     public async Task<IResponseResult> CreateCurrencyAsync(CurrencyRegistrationForm currencyForm)
     {
         List<ValidationResult> errors = ValidateRegistrationFormService.Validate<CurrencyRegistrationForm>(currencyForm);

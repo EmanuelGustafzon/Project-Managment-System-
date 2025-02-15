@@ -22,5 +22,9 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<ProjectEntity>()
            .Property(e => e.Status)
            .HasConversion<string>();
+        
+        modelBuilder.Entity<ProjectEntity>()
+          .Property(e => e.Id)
+          .UseIdentityColumn(100, 1);
     }
 }

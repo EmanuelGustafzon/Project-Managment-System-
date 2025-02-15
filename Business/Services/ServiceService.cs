@@ -11,10 +11,10 @@ using System.Diagnostics;
 namespace Business.Services;
 
 
-public class ServiceService(IServiceRespository serviceRespository, ICurrencyRepository currencyRepository) : IServiceService
+public class ServiceService(IServiceRespository serviceRespository, ICurrencyService currencyService) : IServiceService
 {
     private readonly IServiceRespository _serviceRespository = serviceRespository;
-    private readonly ICurrencyRepository _currencyRepository = currencyRepository;
+    private readonly ICurrencyService _currencyService = currencyService;
 
     public async Task<IResponseResult> CreateServicesAsync(ServiceRegistrationForm serviceForm)
     {
@@ -30,15 +30,21 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             if (serviceExists == true) return Result.AlreadyExists($"Service already exsist with the name: {serviceForm.Name}");
 
             int currencyId = 0;
-            var FoundCurrency = await _currencyRepository.GetAsync(x => x.Currency == serviceForm.Currency);
-            if (FoundCurrency == null)
+
+            var result = await _currencyService.GetCurrencyAsync(serviceForm.Currency);
+            var currency = ResultResponseCastingService.CastResultAndGetData<CurrencyDto>(result);
+            if(currency is null)
             {
                 var currencyForm = CurrencyFactory.CreateRegistrationForm(serviceForm.Currency);
-                var currency = await _currencyRepository.CreateAsync(CurrencyFactory.CreateEntity(currencyForm));
-                if (currency == null) return Result.Error("Could not create currency");
-                currencyId = currency.Id;
+                var createdCurrecyResult = await _currencyService.CreateCurrencyAsync(currencyForm);
+                var createdCurrency = ResultResponseCastingService.CastResultAndGetData<CurrencyDto>(createdCurrecyResult);
+                if(createdCurrency is null)
+                {
+                    return Result.Error("Could not create Customer");
+                }
+                else currencyId = createdCurrency.Id;
+
             }
-            else currencyId = FoundCurrency.Id;
 
             ServiceEntity serviceEntity = ServiceFactory.CreateEntity(serviceForm, currencyId);
             ServiceEntity createdEntityInDb = await _serviceRespository.CreateAsync(serviceEntity);
@@ -104,15 +110,18 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencyRep
             if (serviceExists == false) return Result.NotFound($"Service not found with the id: {id}");
 
             int currencyId = 0;
-            var FoundCurrency = await _currencyRepository.GetAsync(x => x.Currency == updatedForm.Currency);
-            if (FoundCurrency == null)
+            var findCurrencyResponse = await _currencyService.GetCurrencyAsync(updatedForm.Currency);
+            if (findCurrencyResponse is Result<CurrencyDto> findCurrencySuccessResponse && findCurrencySuccessResponse.Data != null)
+            {
+                currencyId = findCurrencySuccessResponse.Data.Id;
+            }
+            else
             {
                 var currencyForm = CurrencyFactory.CreateRegistrationForm(updatedForm.Currency);
-                var currency = await _currencyRepository.CreateAsync(CurrencyFactory.CreateEntity(currencyForm));
-                if (currency == null) return Result.Error("Could not create currency");
-                currencyId = currency.Id;
+                var response = await _currencyService.CreateCurrencyAsync(currencyForm);
+                if (response is Result<CurrencyDto> successResponse && successResponse.Data != null) currencyId = successResponse.Data.Id;
+                else return Result.Error("Could not create Customer");
             }
-            else currencyId = FoundCurrency.Id;
 
             var updatedServiceEntity = await _serviceRespository.UpdateAsync(x => x.Id == id, ServiceFactory.CreateEntity(id, currencyId, updatedForm));
             if (updatedServiceEntity == null)

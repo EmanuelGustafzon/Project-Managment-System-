@@ -8,7 +8,7 @@ import useSendData from "../hooks/useSendData";
 
 
 const ProjectForm = () => {
-    const { makeRequest, validationError, error, response } = useSendData("POST", "api/Project")
+    const { makeRequest, validationError, error, response, loading } = useSendData("POST", "api/Project")
     
     const [projectForm, setProjectForm] = useState<IProjectForm>({
         name: "",
@@ -132,6 +132,7 @@ const ProjectForm = () => {
                             </div>
                         }
                     </ul>
+                    {loading && <p>loading...</p> }
                     {error && <p className="text-red-400">{error}</p>}
                     {error && <p className="text-red-400">{error}</p>}
                     {response && <p>successfully created project</p> }

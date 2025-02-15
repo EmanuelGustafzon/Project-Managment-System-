@@ -13,11 +13,11 @@ const ProjectItem = ({ project, detailsAction, deleteAction, updateAction }:
         <>
             <tbody>
                 <tr>
+                    <td>{project.id}</td>
                     <td>{project.name}</td>
+                    <td>{project.startTime}</td>
+                    <td>{project.endTime}</td>
                     <td>{project.status}</td>
-                    <td>{`${project.projectManager.firstName} ${project.projectManager.lastName}`}</td>
-                    <td>{project.service.name}</td>
-                    <td>{project.customer.name}</td>
                     <td>
                         <button onClick={() => detailsAction(project)} className="btn btn-accent btn-xs mr-1">Details</button>
                         <button onClick={() => updateAction(project)} className="btn btn-xs btn-accent mr-1">update</button>

@@ -5,8 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Entities;
 
+[Table("Projects")]
 public class ProjectEntity
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     [Column(TypeName = "nvarchar(100)")]

@@ -39,36 +39,41 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
             var projectExist = await _projectRepository.GetAsync(x => x.Name == projectForm.Name) != null; 
             if(projectExist == true) return Result.AlreadyExists("project name already exist");
 
-            if (projectForm.UserForm != null && projectForm.ProjectManagerId > 0)
+            if (projectForm.UserForm != null && projectForm.ProjectManagerId == 0)
             {
-                (int userId, string? errorMessage) = await CreateUserAndGetId(projectForm.UserForm);
-                if (userId != 0) projectForm.ProjectManagerId = userId;
-                else return Result.Error(errorMessage!);
-            }
-
-            if (projectForm.CustomerForm != null && projectForm.CustomerId > 0)
-            {
-                (int customerId, string? errorMessage) = await CreateCustomerAndGetId(projectForm.CustomerForm);
-                if (customerId != 0) projectForm.CustomerId = customerId;
-                else
+                var result = await _userService.CreateUserAsync(projectForm.UserForm);
+                var user = ResultResponseCastingService.CastResultAndGetData<UserDto>(result);
+                if (user is null)
                 {
                     await _projectRepository.RollbackTransactionAsync();
-                    return Result.Error(errorMessage!);
+                    return Result.Error($"{result.ErrorMessage}");
                 }
+                projectForm.ProjectManagerId = user.Id;
             }
-            if (projectForm.ServiceForm != null && projectForm.ServiceId > 0)
+            if (projectForm.CustomerForm != null && projectForm.CustomerId == 0)
             {
-                (int serviceId, string? errorMessage) = await CreateServiceAndGetId(projectForm.ServiceForm);
-                if (serviceId != 0) projectForm.ServiceId = serviceId;
-                else
+                var result = await _customerService.CreateCustomerAsync(projectForm.CustomerForm);
+                var customer = ResultResponseCastingService.CastResultAndGetData<CustomerDto>(result);
+                if (customer is null)
                 {
-                    Debug.WriteLine("hi");
                     await _projectRepository.RollbackTransactionAsync();
-                    return Result.Error(errorMessage!);
+                    return Result.Error($"{result.ErrorMessage}");
                 }
+                projectForm.CustomerId = customer.Id;
+            }
+            if (projectForm.ServiceForm != null && projectForm.ServiceId == 0)
+            {
+                var result = await _serviceService.CreateServicesAsync(projectForm.ServiceForm);
+                var service = ResultResponseCastingService.CastResultAndGetData<ServiceDto>(result);
+                if (service is null)
+                {
+                    await _projectRepository.RollbackTransactionAsync();
+                    return Result.Error($"{result.ErrorMessage}");
+                }
+                projectForm.ServiceId = service.Id;
             }
 
-            if(projectForm.TotalPrice == 0 || projectForm.TotalPrice == null)
+            if (projectForm.TotalPrice == 0 || projectForm.TotalPrice == null)
             {
                 var totalPrice = await GetCalculatedPrice(projectForm);
                 projectForm.TotalPrice = totalPrice;
@@ -132,6 +137,8 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
             return Result.BadRequest("Service form or existing service must be provided");
         if (projectForm.UserForm == null && projectForm.ProjectManagerId == 0)
             return Result.BadRequest("User form or project manager id of user must be proviced");
+        if (projectForm.StartTime > projectForm.EndTime)
+            return Result.BadRequest("The project end time bust be later then the start time");
 
         List<ValidationResult> errors = ValidateRegistrationFormService.Validate<ProjectRegistrationForm>(projectForm);
         if (errors?.Count != 0 && errors != null)
@@ -146,34 +153,39 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
             var projectExist = await _projectRepository.EntityExistsAsync(x => x.Id == id);
             if (projectExist == false) return Result.NotFound("project does not exist");
 
-            if (projectForm.UserForm != null && projectForm.ProjectManagerId > 0)
+            if (projectForm.UserForm != null && projectForm.ProjectManagerId == 0)
             {
-                (int userId, string? errorMessage) = await CreateUserAndGetId(projectForm.UserForm);
-                if (userId != 0) projectForm.ProjectManagerId = userId;
-                else return Result.Error(errorMessage!);
-            }
-
-            if (projectForm.CustomerForm != null && projectForm.CustomerId > 0)
-            {
-                (int customerId, string? errorMessage) = await CreateCustomerAndGetId(projectForm.CustomerForm);
-                if (customerId != 0) projectForm.CustomerId = customerId;
-                else
+                var result = await _userService.CreateUserAsync(projectForm.UserForm);
+                var user = ResultResponseCastingService.CastResultAndGetData<UserDto>(result);
+                if (user is null)
                 {
                     await _projectRepository.RollbackTransactionAsync();
-                    return Result.Error(errorMessage!);
+                    return Result.Error($"{result.ErrorMessage}");
                 }
+                projectForm.ProjectManagerId = user.Id;
             }
-            if (projectForm.ServiceForm != null && projectForm.ServiceId > 0)
+            if (projectForm.CustomerForm != null && projectForm.CustomerId == 0)
             {
-                (int serviceId, string? errorMessage) = await CreateServiceAndGetId(projectForm.ServiceForm);
-                if (serviceId != 0) projectForm.ServiceId = serviceId;
-                else
+                var result = await _customerService.CreateCustomerAsync(projectForm.CustomerForm);
+                var customer = ResultResponseCastingService.CastResultAndGetData<CustomerDto>(result);
+                if (customer is null)
                 {
                     await _projectRepository.RollbackTransactionAsync();
-                    return Result.Error(errorMessage!);
+                    return Result.Error($"{result.ErrorMessage}");
                 }
+                projectForm.CustomerId = customer.Id;
             }
-
+            if (projectForm.ServiceForm != null && projectForm.ServiceId == 0)
+            {
+                var result = await _serviceService.CreateServicesAsync(projectForm.ServiceForm);
+                var service = ResultResponseCastingService.CastResultAndGetData<ServiceDto>(result);
+                if (service is  null)
+                {
+                    await _projectRepository.RollbackTransactionAsync();
+                    return Result.Error($"{result.ErrorMessage}");
+                }     
+                projectForm.ServiceId = service.Id;
+            }
             if (projectForm.TotalPrice == 0 || projectForm.TotalPrice == null)
             {
                 var totalPrice = await GetCalculatedPrice(projectForm);
@@ -237,52 +249,17 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
     }
 
     // help methods
-    private async Task<(int id, string? errorMessage)> CreateCustomerAndGetId(CustomerRegistrationForm form)
-    {
-        var result = await _customerService.CreateCustomerAsync(form);
-        Result<CustomerDto>? castResult = result as Result<CustomerDto>;
-        if (castResult != null && castResult.Data?.Id != null)
-        {
-            var customerId = castResult.Data.Id;
-            return (customerId, null);
-        }
-        return (0, result.ErrorMessage);
-    }
-    private async Task<(int id, string? errorMessage)> CreateServiceAndGetId(ServiceRegistrationForm form)
-    {
-        var result = await _serviceService.CreateServicesAsync(form);
-        Result<ServiceDto>? castResult = result as Result<ServiceDto>;
-        if (castResult != null && castResult.Data?.Id != null)
-        {
-            var serviceId = castResult.Data.Id;
-            return (serviceId, null);
-
-        }
-        return (0, result.ErrorMessage);
-    }
-    private async Task<(int id, string? errorMessage)> CreateUserAndGetId(UserRegistrationForm form)
-    {
-        var result = await _userService.CreateUserAsync(form);
-        Result<UserDto>? castResult = result as Result<UserDto>;
-        if (castResult != null && castResult.Data?.Id != null)
-        {
-            var userId = castResult.Data.Id;
-            return (userId, null);
-
-        }
-        return (0, result.ErrorMessage);
-    }
 
     private async Task<decimal> GetCalculatedPrice(ProjectRegistrationForm form)
     {
         try
         {
             var result = await _serviceService.GetServiceAsync((int)form.ServiceId!);
-            var castedResult = result as Result<ServiceDto>;
-            if (castedResult?.Data == null) return 0;
+            var service = ResultResponseCastingService.CastResultAndGetData<ServiceDto>(result);
+            if (service is null) return 0;
 
-            decimal price = castedResult.Data.Price;
-            Enum.TryParse<Units>(castedResult.Data.Unit, true, out var unit);
+            decimal price = service.Price;
+            Enum.TryParse<Units>(service.Unit, true, out var unit);
             
             decimal totalPrice = CalculateTotalProjectPriceService.CalculatePrice(form.StartTime, form.EndTime, unit, price);
 

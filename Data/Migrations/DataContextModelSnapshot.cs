@@ -36,7 +36,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CurrencyEntity");
+                    b.ToTable("Currencies");
                 });
 
             modelBuilder.Entity("Data.Entities.CustomerEntity", b =>
@@ -56,7 +56,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CustomerEntity");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>
@@ -65,7 +65,7 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 100L);
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -158,7 +158,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Currencies");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Data.Entities.ProjectEntity", b =>

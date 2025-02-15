@@ -70,12 +70,12 @@ const AddService: React.FC<serviceFormProps> = ({ onChooseServiceChange, onCreat
                         <input
                             value={service.currency}
                             type="text"
-                            list="currancies"
-                            name="currancy"
+                            list="currencies"
+                            name="currency"
                             onChange={handleChange}
                             className="input input-bordered input-accent w-full max-w-xs mb-2" />
                                 {customerData.loading && <p>loading currencies...</p>}
-                                    <datalist id="currancies">
+                                    <datalist id="currencies">
                                         {customerData.data &&
                                         customerData.data.map((currency) => (
                                         <option key={currency.id} value={currency.currency} />

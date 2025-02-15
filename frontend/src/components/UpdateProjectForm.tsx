@@ -9,7 +9,7 @@ import { IProject } from "../interfaces/IProject";
 
 
 const UpdateProjectForm = ({ projectToUpdate }: { projectToUpdate: IProject }) => {
-    const { makeRequest, validationError, error, response } = useSendData("PUT", `api/Project/${projectToUpdate.id}`)
+    const { makeRequest, validationError, error, response, loading } = useSendData("PUT", `api/Project/${projectToUpdate.id}`)
 
     const [projectForm, setProjectForm] = useState<IProjectForm>({
         name: (projectToUpdate?.name ? projectToUpdate.name : ""),
@@ -133,6 +133,7 @@ const UpdateProjectForm = ({ projectToUpdate }: { projectToUpdate: IProject }) =
                             </div>
                         }
                     </ul>
+                    {loading && <p>loading...</p>}
                     {error && <p className="text-red-400">{error}</p>}
                     {error && <p className="text-red-400">{error}</p>}
                     {response !== null && <p>successfully created project</p>}

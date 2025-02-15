@@ -23,7 +23,7 @@ function App() {
           <ProjectList />
           
           <dialog ref={modalRef} className="modal">
-              <div className="modal-box bg-zinc-900">
+              <div className="modal-box">
                   <ProjectForm />
                   <div className="modal-action">
                       <button onClick={() => setShowModal(false)} className="btn">Close</button>

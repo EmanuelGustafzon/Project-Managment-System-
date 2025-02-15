@@ -2,6 +2,7 @@
 
 namespace Data.Entities;
 
+[Table("Currencies")]
 public class CurrencyEntity
 {
     public int Id { get; set; }

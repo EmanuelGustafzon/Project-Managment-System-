@@ -3,6 +3,7 @@ using System.Reflection.Metadata;
 
 namespace Data.Entities;
 
+[Table("Users")]
 public class UserEntity
 {
     public int Id { get; set; }

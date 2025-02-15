@@ -82,11 +82,11 @@ const ProjectList = () => {
                 <table className="table table-xs table-pin-rows table-pin-cols">
                     <thead>
                         <tr>
+                            <td>Project Number</td>
                             <td>Name</td>
+                            <td>Start Date</td>
+                            <td>End Date</td>
                             <td>Status</td>
-                            <td>ProjectManager</td>
-                            <td>Service</td>
-                            <td>Customer</td>
                         </tr>
                     </thead>
                     {

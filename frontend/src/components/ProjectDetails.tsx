@@ -5,6 +5,7 @@ const ProjectDetails = ({ project }: { project: IProject }) => {
         <div className="max-w-xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
             <h2 className="text-2xl font-semibold mb-4">Project Details</h2>
             <div className="space-y-3">
+                <p><span className="font-semibold">project Number:</span> {project.id}</p>
                 <p><span className="font-semibold">Name:</span> {project.name}</p>
                 <p><span className="font-semibold">Start Time:</span> {project.startTime}</p>
                 <p><span className="font-semibold">End Time:</span> {project.endTime}</p>

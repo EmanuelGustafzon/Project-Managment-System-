@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Entities;
 
+[Table("Services")]
 public class ServiceEntity
 {
     public int Id { get; set; }

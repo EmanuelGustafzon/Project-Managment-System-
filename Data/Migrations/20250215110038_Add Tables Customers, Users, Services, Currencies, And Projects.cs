@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CustomersServicesCurrenciesUsersProjectsTablesAdded : Migration
+    public partial class AddTablesCustomersUsersServicesCurrenciesAndProjects : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,9 +17,7 @@ namespace Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Firstname = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    Lastname = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", nullable: false)
+                    Currency = table.Column<string>(type: "nvarchar(20)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -27,29 +25,32 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CurrencyEntity",
+                name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Currency = table.Column<string>(type: "nvarchar(20)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    OrgansisationNumber = table.Column<string>(type: "nvarchar(50)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CurrencyEntity", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerEntity",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", nullable: false)
+                    Firstname = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    Lastname = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(100)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomerEntity", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -68,9 +69,9 @@ namespace Data.Migrations
                 {
                     table.PrimaryKey("PK_Services", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Services_CurrencyEntity_CurrencyId",
+                        name: "FK_Services_Currencies_CurrencyId",
                         column: x => x.CurrencyId,
-                        principalTable: "CurrencyEntity",
+                        principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -80,7 +81,7 @@ namespace Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("SqlServer:Identity", "100, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     StartTime = table.Column<DateTime>(type: "Date", nullable: false),
                     EndTime = table.Column<DateTime>(type: "Date", nullable: false),
@@ -94,21 +95,21 @@ namespace Data.Migrations
                 {
                     table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Projects_Currencies_ProjectManagerId",
-                        column: x => x.ProjectManagerId,
-                        principalTable: "Currencies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Projects_CustomerEntity_CustomerId",
+                        name: "FK_Projects_Customers_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "CustomerEntity",
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Projects_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Projects_Users_ProjectManagerId",
+                        column: x => x.ProjectManagerId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -141,16 +142,16 @@ namespace Data.Migrations
                 name: "Projects");
 
             migrationBuilder.DropTable(
-                name: "Currencies");
-
-            migrationBuilder.DropTable(
-                name: "CustomerEntity");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Services");
 
             migrationBuilder.DropTable(
-                name: "CurrencyEntity");
+                name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Currencies");
         }
     }
 }

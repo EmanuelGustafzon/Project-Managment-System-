@@ -15,6 +15,8 @@ public class ServiceRegistrationForm
 
     [Range(1, int.MaxValue, ErrorMessage = "Please enter a value bigger than 0")]
     public decimal Price { get; set; }
+
+    [Required]
     public string Currency { get; set; } = null!;
 
     [Required]

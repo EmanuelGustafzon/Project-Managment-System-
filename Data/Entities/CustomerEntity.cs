@@ -2,6 +2,7 @@
 
 namespace Data.Entities;
 
+[Table("Customers")]
 public class CustomerEntity
 {
     public int Id { get; set; }
