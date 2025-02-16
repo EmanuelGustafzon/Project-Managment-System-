@@ -28,7 +28,7 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
         if (projectForm.UserForm == null && projectForm.ProjectManagerId == 0)
             return Result.BadRequest("User form or project manager id of user must be proviced");
         if (projectForm.StartTime > projectForm.EndTime)
-            return Result.BadRequest("The project end time bust be later then the start time");
+            return Result.BadRequest("The project ending time must be later then the starting time");
 
         List<ValidationResult> errors = ValidateRegistrationFormService.Validate<ProjectRegistrationForm>(projectForm);
         if (errors?.Count != 0 && errors != null)

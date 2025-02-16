@@ -64,7 +64,8 @@ const UpdateProjectForm = ({ projectToUpdate }: { projectToUpdate: IProject }) =
     const handleCreateUserChange = (createdUser: { firstName: string; lastName: string, email: string }) => {
         setProjectForm(prev => ({
             ...prev,
-            userForm: createdUser
+            userForm: createdUser,
+            projectManagerId: 0
         }));
     };
     // step 3 add customer

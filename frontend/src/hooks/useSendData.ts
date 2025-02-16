@@ -13,7 +13,7 @@ function useSendData(method: string, endpoint: string, url?: string) {
     const [response, setResponse] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>();
-    const [validationError, setvalidationError] = useState<ValidationErrorResponse>();
+    const [validationError, setValidationError] = useState<ValidationErrorResponse>();
 
     const makeRequest = useCallback(async (data: unknown) => {
         setLoading(true)
@@ -27,15 +27,15 @@ function useSendData(method: string, endpoint: string, url?: string) {
             });
             const resData = await res.json();
             if (resData.errors != null) {
-                setvalidationError(resData.errors);
+                setValidationError(resData.errors);
                 return;
             }
-            if (resData.ErrorMessage != null) {
-                setError(resData.ErrrMessge);
+            if (resData.success == false) {
+                setError(resData.errorMessage);
                 return;
             }
             setError(undefined);
-            setvalidationError(undefined);
+            setValidationError(undefined);
             setResponse(resData.data)
         } catch {
             setError('An error occured')
@@ -44,7 +44,6 @@ function useSendData(method: string, endpoint: string, url?: string) {
             setLoading(false)
         }
     }, [method, endpoint, url])
-
     return {
         makeRequest,
         response,

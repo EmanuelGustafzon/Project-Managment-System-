@@ -9,7 +9,7 @@ import useSendData from "../hooks/useSendData";
 
 const ProjectForm = () => {
     const { makeRequest, validationError, error, response, loading } = useSendData("POST", "api/Project")
-    
+
     const [projectForm, setProjectForm] = useState<IProjectForm>({
         name: "",
         startTime: "",
@@ -63,7 +63,8 @@ const ProjectForm = () => {
     const handleCreateUserChange = (createdUser: { firstName: string; lastName: string, email: string }) => {
         setProjectForm(prev => ({
             ...prev,
-            userForm: createdUser
+            userForm: createdUser,
+            projectManagerId: 0
         }));
     };
     // step 3 add customer
