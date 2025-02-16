@@ -19,23 +19,29 @@ public static class ProjectFactory
             EndTime = entity.EndTime,
             Status = entity.Status.ToString(),
         };
-        projectDto.ProjectManager = new();
-        projectDto.ProjectManager.Id = entity.ProjectManager.Id;
-        projectDto.ProjectManager.FirstName = entity.ProjectManager.Firstname;
-        projectDto.ProjectManager.LastName = entity.ProjectManager.Lastname;
-        projectDto.ProjectManager.Email = entity.ProjectManager.Email;
+        projectDto.ProjectManager = new()
+        {
+            Id = entity.ProjectManager.Id,
+            FirstName = entity.ProjectManager.Firstname,
+            LastName = entity.ProjectManager.Lastname,
+            Email = entity.ProjectManager.Email
+        };
 
-        projectDto.Customer = new();
-        projectDto.Customer.Id = entity.Customer.Id;
-        projectDto.Customer.Name = entity.Customer.Name;
-        projectDto.Customer.OrganisationNumber = entity.Customer.OrgansisationNumber;
+        projectDto.Customer = new()
+        {
+            Id = entity.Customer.Id,
+            Name = entity.Customer.Name,
+            OrganisationNumber = entity.Customer.OrgansisationNumber
+        };
 
-        projectDto.Service = new();
-        projectDto.Service.Id = entity.Service.Id;
-        projectDto.Service.Name = entity.Service.Name;
-        projectDto.Service.Price = entity.Service.Price;
-        projectDto.Service.Unit = entity.Service.Unit.ToString();
-        projectDto.Service.Currency = entity.Service.Currency.Currency;
+        projectDto.Service = new()
+        {
+            Id = entity.Service.Id,
+            Name = entity.Service.Name,
+            Price = entity.Service.Price,
+            Unit = entity.Service.Unit.ToString(),
+            Currency = entity.Service.Currency.Currency
+        };
 
         return projectDto;
     }

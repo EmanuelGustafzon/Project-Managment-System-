@@ -135,8 +135,7 @@ const UpdateProjectForm = ({ projectToUpdate }: { projectToUpdate: IProject }) =
                     </ul>
                     {loading && <p>loading...</p>}
                     {error && <p className="text-red-400">{error}</p>}
-                    {error && <p className="text-red-400">{error}</p>}
-                    {response !== null && <p>successfully created project</p>}
+                    {response !== null && <p>successfully updated project</p>}
                 </div>}
             <div className="flex flex-wrap justify-center items-center gap-2 m-5">
                 <button className="btn" onClick={() => setStep(lastStep => (lastStep - 1 + 5) % 5)}>Prev</button>

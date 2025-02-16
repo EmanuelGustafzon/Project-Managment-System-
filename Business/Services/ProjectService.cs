@@ -92,7 +92,8 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
             await _projectRepository.CommitTransactionAsync();
 
             ProjectEntity fullProject = await _projectRepository.GetAsync(x => x.Id == createdProject.Id);
-            return Result<ProjectDto>.Created(ProjectFactory.CreateDto(fullProject));
+            ProjectDto fullProjectDto = ProjectFactory.CreateDto(fullProject);
+            return Result<ProjectDto>.Created(fullProjectDto);
         }
         catch (Exception ex)
         {
@@ -202,7 +203,10 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
                 return Result.Error("Could not update project");
             }
             await _projectRepository.CommitTransactionAsync();
-            return Result<ProjectDto>.Ok(ProjectFactory.CreateDto(updatedProject));
+
+            ProjectEntity fullProject = await _projectRepository.GetAsync(x => x.Id == updatedProject.Id);
+            ProjectDto fullProjectDto = ProjectFactory.CreateDto(fullProject);
+            return Result<ProjectDto>.Created(fullProjectDto);
         }
         catch (Exception ex)
         {

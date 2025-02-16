@@ -15,8 +15,8 @@ const ProjectItem = ({ project, detailsAction, deleteAction, updateAction }:
                 <tr>
                     <td>{project.id}</td>
                     <td>{project.name}</td>
-                    <td>{project.startTime}</td>
-                    <td>{project.endTime}</td>
+                    <td>{project.startTime.split("T")[0]}</td>
+                    <td>{project.endTime.split("T")[0]}</td>
                     <td>{project.status}</td>
                     <td>
                         <button onClick={() => detailsAction(project)} className="btn btn-accent btn-xs mr-1">Details</button>

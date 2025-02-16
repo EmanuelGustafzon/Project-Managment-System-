@@ -15,7 +15,6 @@ const ProjectList = () => {
     const [projectDetailsToShow, setProjectDetailsToShow] = useState<IProject | null>(null);
     const modalRef = useRef<HTMLDialogElement>(null);
     const baseUrl = useBaseUrl()
-
     useEffect(() => {
         if (showModal) {
             modalRef.current?.showModal();
@@ -26,11 +25,9 @@ const ProjectList = () => {
 
     const projectDetails = (project: IProject) => {
         setProjectDetailsToShow(project);
-        setProjectToUpdate(null)
         setShowModal(true)
     }
     const updateProject = (project: IProject) => {
-        setProjectDetailsToShow(null);
         setProjectToUpdate(project)
         setShowModal(true)
     }
@@ -50,6 +47,7 @@ const ProjectList = () => {
         setDeleteActionOccured("failed to delete project")
         setShowModal(true)
     }
+
     const closeModel = () => {
         setShowModal(false)
         setProjectDetailsToShow(null);
@@ -101,7 +99,6 @@ const ProjectList = () => {
                     }
                 </table>
             }
-            
         </div>
     )
 }
