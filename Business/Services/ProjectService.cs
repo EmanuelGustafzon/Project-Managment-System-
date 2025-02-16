@@ -202,7 +202,7 @@ public class ProjectService(IProjectRepository projectRepository, ICustomerServi
                 return Result.Error("Could not update project");
             }
             await _projectRepository.CommitTransactionAsync();
-            return Result.Ok();
+            return Result<ProjectDto>.Ok(ProjectFactory.CreateDto(updatedProject));
         }
         catch (Exception ex)
         {

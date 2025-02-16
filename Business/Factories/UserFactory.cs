@@ -17,4 +17,9 @@ public static class UserFactory
     {
         return new UserEntity { Id = id, Firstname = form.Firstname, Lastname = form.Lastname, Email = form.Email };
     }
+
+    public static UserRegistrationForm CreateRegistrationForm(string firstname, string lastname, string email)
+    {
+        return new UserRegistrationForm { Firstname = firstname, Lastname = lastname, Email = email };
+    }
 }

@@ -73,4 +73,32 @@ public static class ProjectFactory
             CustomerId = (int)form.CustomerId!
         };
     }
+    public static ProjectRegistrationForm CreateRegistrationForm(
+    string name,
+    decimal totalPrice,
+    DateTime start,
+    DateTime end,
+    string status,
+    int projectManagerId = 0,
+    int customerId = 0,
+    int serviceId = 0,
+    UserRegistrationForm? userForm = null,
+    CustomerRegistrationForm? customerForm = null,
+    ServiceRegistrationForm? serviceForm = null)
+    {
+        return new ProjectRegistrationForm
+        {
+            Name = name,
+            TotalPrice = totalPrice,
+            StartTime = start,
+            EndTime = end,
+            Status = status,
+            ProjectManagerId = projectManagerId,
+            CustomerId = customerId,
+            ServiceId = serviceId,
+            UserForm = userForm,
+            CustomerForm = customerForm,
+            ServiceForm = serviceForm
+        };
+    }
 }

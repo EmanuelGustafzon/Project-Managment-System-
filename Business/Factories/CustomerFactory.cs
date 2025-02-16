@@ -17,4 +17,8 @@ public static class CustomerFactory
     {
         return new CustomerEntity { Id = id, Name = form.Name, OrgansisationNumber = form.OrganisationNumber};
     }
+    public static CustomerRegistrationForm CreateRegistrationForm(string name, string? organisationNumber)
+    {
+        return new CustomerRegistrationForm { Name = name, OrganisationNumber = organisationNumber};
+    }
 }

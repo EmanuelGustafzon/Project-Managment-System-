@@ -42,4 +42,8 @@ public static class ServiceFactory
             Unit = Enum.TryParse<Units>(form.Unit, true, out var unit) ? unit : default
         };
     }
+    public static ServiceRegistrationForm CreateRegistrationForm(string name, string description, decimal price, string currency, string unit)
+    {
+        return new ServiceRegistrationForm { Name = name, Description = description, Price = price, Currency = currency, Unit = unit};
+    }
 }
