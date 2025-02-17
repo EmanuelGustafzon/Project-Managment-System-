@@ -26,6 +26,7 @@ public class ProjectService_Tests
         var services = new ServiceCollection();
 
         services.AddScoped<DataContext>(provider => new DataContext(options));
+        services.AddMemoryCache();
 
         // repositories
         services.AddScoped<ICurrencyRepository, CurrencyRepository>();
