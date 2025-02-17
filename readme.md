@@ -1,6 +1,6 @@
 # Databases course with EC Utbildningen 
 ## Learning Objectives 
-SQL, Relationships, Caching, Transaction Management, Solid, Repository pattern, EF Core
+SQL, Relationships, Caching, Transaction Management, Solid, Repository pattern, EF Core, Integration tests with in memory database
 
 ### Get Started 
 1. Set up database, I used localDb
