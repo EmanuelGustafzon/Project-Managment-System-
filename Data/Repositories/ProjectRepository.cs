@@ -30,11 +30,6 @@ public class ProjectRepository(DataContext context, IMemoryCache cache) : BaseRe
     }
     public async override Task<ProjectEntity> GetAsync(Expression<Func<ProjectEntity, bool>> predicate)
     {
-        var cacheKey = GetCacheKey(nameof(GetAsync), predicate.ToString());
-
-        if (_memoryCache.TryGetValue(cacheKey, out ProjectEntity? cachedEntity) && cachedEntity != null)
-            return cachedEntity;
-
         var project = await _context.Projects
             .Where(predicate)
             .Include(x => x.ProjectManager)
@@ -42,8 +37,6 @@ public class ProjectRepository(DataContext context, IMemoryCache cache) : BaseRe
             .Include(x => x.Service)
             .ThenInclude(x => x.Currency)
             .FirstOrDefaultAsync() ?? null!;
-
-        _memoryCache.Set(cacheKey, project, TimeSpan.FromMinutes(5));
 
         return project;
     }

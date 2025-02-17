@@ -53,16 +53,7 @@ public abstract class BaseRepository<TEntity>(DataContext context, IMemoryCache 
     public virtual async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate)
     {
         if(predicate == null) return null!;
-
-        var cacheKey = GetCacheKey(nameof(GetAsync), predicate.ToString());
-
-        if (_memoryCache.TryGetValue(cacheKey, out TEntity? cachedEntity) && cachedEntity != null)
-            return cachedEntity;
-
         var entity = await _dbSet.FirstOrDefaultAsync(predicate) ?? null!;
-
-        _memoryCache.Set(cacheKey, entity, TimeSpan.FromMinutes(5));
-
         return entity;
     }
 
@@ -79,7 +70,6 @@ public abstract class BaseRepository<TEntity>(DataContext context, IMemoryCache 
             await _context.SaveChangesAsync();
 
             _memoryCache.Remove(GetCacheKey(nameof(GetAllAsync)));
-            _memoryCache.Remove(GetCacheKey(nameof(GetAllAsync), predicate.ToString()));
 
             return currentEntity;
         }
@@ -103,7 +93,6 @@ public abstract class BaseRepository<TEntity>(DataContext context, IMemoryCache 
             await _context.SaveChangesAsync();
 
             _memoryCache.Remove(GetCacheKey(nameof(GetAllAsync)));
-            _memoryCache.Remove(GetCacheKey(nameof(GetAllAsync), predicate.ToString()));
 
             return true;
         }

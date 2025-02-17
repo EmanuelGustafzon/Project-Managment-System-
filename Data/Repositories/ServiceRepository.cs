@@ -30,17 +30,10 @@ public class ServiceRepository(DataContext context, IMemoryCache cache) : BaseRe
 
     public async override Task<ServiceEntity> GetAsync(Expression<Func<ServiceEntity, bool>> predicate)
     {
-        var cacheKey = GetCacheKey(nameof(GetAsync), predicate.ToString());
-
-        if (_memoryCache.TryGetValue(cacheKey, out ServiceEntity? cachedEntity) && cachedEntity != null)
-            return cachedEntity;
-
         var service = await _context.Services
         .Where(predicate)
         .Include(x => x.Currency)
         .FirstOrDefaultAsync() ?? null!;
-
-        _memoryCache.Set(cacheKey, service, TimeSpan.FromMinutes(5));
 
         return service;
     }
