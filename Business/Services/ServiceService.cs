@@ -33,24 +33,24 @@ public class ServiceService(IServiceRespository serviceRespository, ICurrencySer
 
             var result = await _currencyService.GetCurrencyAsync(serviceForm.Currency);
             var currency = ResultResponseCastingService.CastResultAndGetData<CurrencyDto>(result);
-            if(currency is null)
+            if (currency == null)
             {
                 var currencyForm = CurrencyFactory.CreateRegistrationForm(serviceForm.Currency);
                 var createdCurrecyResult = await _currencyService.CreateCurrencyAsync(currencyForm);
                 var createdCurrency = ResultResponseCastingService.CastResultAndGetData<CurrencyDto>(createdCurrecyResult);
-                if(createdCurrency is null)
+                if (createdCurrency == null)
                 {
-                    return Result.Error("Could not create Customer");
+                    return Result.Error("Could not create currency");
                 }
                 else currencyId = createdCurrency.Id;
 
             }
+            else currencyId = currency.Id;
 
             ServiceEntity serviceEntity = ServiceFactory.CreateEntity(serviceForm, currencyId);
             ServiceEntity createdEntityInDb = await _serviceRespository.CreateAsync(serviceEntity);
             if(createdEntityInDb == null)
             {
-                await _serviceRespository.RollbackTransactionAsync();
                 return Result.Error("Could not create service");
             }
             ServiceDto serviceDto = ServiceFactory.CreateDto(createdEntityInDb);

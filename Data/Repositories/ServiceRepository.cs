@@ -30,11 +30,9 @@ public class ServiceRepository(DataContext context, IMemoryCache cache) : BaseRe
 
     public async override Task<ServiceEntity> GetAsync(Expression<Func<ServiceEntity, bool>> predicate)
     {
-        var service = await _context.Services
+        return await _context.Services
         .Where(predicate)
         .Include(x => x.Currency)
         .FirstOrDefaultAsync() ?? null!;
-
-        return service;
     }
 }
